@@ -1,0 +1,39 @@
+name: sasmita_lens
+description: Futuristic AgTech Solutions - Fruit Quality Analysis App
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management
+  flutter_riverpod: ^2.4.9
+
+  # Animations
+  flutter_animate: ^4.3.0
+
+  # UI Components
+  cupertino_icons: ^1.0.6
+  glassmorphism: ^3.0.0
+
+  # Utilities
+  intl: ^0.18.1
+  flutter_svg: ^2.0.9
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/icons/

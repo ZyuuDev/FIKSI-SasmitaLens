@@ -1,0 +1,294 @@
+﻿Analyzing sasmita_lens...                                       
+
+warning - The include file 'package:flutter_lints/flutter.yaml' in 'C:\Users\FAIRUZ\Documents\sasmita_lens\analysis_options.yaml' can't be found when analyzing 'C:\Users\FAIRUZ\Documents\sasmita_lens' - analysis_options.yaml:1:10 - include_file_not_found
+warning - 'avoid_returning_null' was removed in Dart '3.3.0' - analysis_options.yaml:39:5 - removed_lint
+warning - 'avoid_returning_null_for_future' was removed in Dart '3.3.0' - analysis_options.yaml:40:5 - removed_lint
+warning - 'invariant_booleans' was removed in Dart '3.0.0' - analysis_options.yaml:75:5 - removed_lint
+warning - 'iterable_contains_unrelated_type' was removed in Dart '3.3.0' - analysis_options.yaml:76:5 - removed_lint
+warning - 'list_remove_unrelated_type' was removed in Dart '3.3.0' - analysis_options.yaml:82:5 - removed_lint
+warning - 'package_api_docs' was removed in Dart '3.7.0' - analysis_options.yaml:97:5 - removed_lint
+warning - 'prefer_equal_for_default_values' was removed in Dart '3.0.0' - analysis_options.yaml:112:5 - removed_lint
+warning - 'unsafe_html' was removed in Dart '3.7.0' - analysis_options.yaml:172:5 - removed_lint
+   info - Sort directive sections alphabetically - lib\main.dart:5:1 - directives_ordering
+   info - Sort directive sections alphabetically - lib\main.dart:6:1 - directives_ordering
+   info - Constructor declarations should be before non-constructor declarations - lib\models\fruit_analysis.dart:24:3 - sort_constructors_first
+   info - Required named parameters should be before optional named parameters - lib\models\fruit_analysis.dart:29:19 - always_put_required_named_parameters_first
+   info - Required named parameters should be before optional named parameters - lib\models\fruit_analysis.dart:30:19 - always_put_required_named_parameters_first
+   info - Required named parameters should be before optional named parameters - lib\models\fruit_analysis.dart:31:19 - always_put_required_named_parameters_first
+   info - Required named parameters should be before optional named parameters - lib\models\fruit_analysis.dart:32:19 - always_put_required_named_parameters_first
+   info - Required named parameters should be before optional named parameters - lib\models\fruit_analysis.dart:34:19 - always_put_required_named_parameters_first
+   info - Required named parameters should be before optional named parameters - lib\models\fruit_analysis.dart:35:19 - always_put_required_named_parameters_first
+   info - Required named parameters should be before optional named parameters - lib\models\fruit_analysis.dart:38:19 - always_put_required_named_parameters_first
+   info - Constructor declarations should be before non-constructor declarations - lib\models\fruit_analysis.dart:47:11 - sort_constructors_first
+   info - Unnecessary use of a 'double' literal - lib\models\fruit_analysis.dart:54:21 - prefer_int_literals
+   info - Unnecessary use of a 'double' literal - lib\models\fruit_analysis.dart:55:18 - prefer_int_literals
+   info - The value of the argument is redundant because it matches the default value - lib\models\fruit_analysis.dart:57:22 - avoid_redundant_argument_values
+   info - Unnecessary use of a 'double' literal - lib\models\fruit_analysis.dart:62:21 - prefer_int_literals
+   info - Constructor declarations should be before non-constructor declarations - lib\models\fruit_analysis.dart:88:11 - sort_constructors_first
+   info - Unnecessary use of a 'double' literal - lib\models\fruit_analysis.dart:94:13 - prefer_int_literals
+   info - Unnecessary use of a 'double' literal - lib\models\fruit_analysis.dart:95:21 - prefer_int_literals
+   info - Unnecessary use of a 'double' literal - lib\models\fruit_analysis.dart:96:18 - prefer_int_literals
+   info - The value of the argument is redundant because it matches the default value - lib\models\fruit_analysis.dart:101:14 - avoid_redundant_argument_values
+   info - Unnecessary use of a 'double' literal - lib\models\fruit_analysis.dart:103:21 - prefer_int_literals
+   info - Constructor declarations should be before non-constructor declarations - lib\models\fruit_analysis.dart:180:3 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\models\fruit_analysis.dart:198:3 - sort_constructors_first
+   info - Required named parameters should be before optional named parameters - lib\models\fruit_analysis.dart:202:19 - always_put_required_named_parameters_first
+   info - Sort directive sections alphabetically - lib\models\models.dart:6:1 - directives_ordering
+   info - Constructor declarations should be before non-constructor declarations - lib\models\scan_feed.dart:25:3 - sort_constructors_first
+   info - Required named parameters should be before optional named parameters - lib\models\scan_feed.dart:30:19 - always_put_required_named_parameters_first
+   info - Required named parameters should be before optional named parameters - lib\models\scan_feed.dart:31:19 - always_put_required_named_parameters_first
+   info - Required named parameters should be before optional named parameters - lib\models\scan_feed.dart:32:19 - always_put_required_named_parameters_first
+   info - Required named parameters should be before optional named parameters - lib\models\scan_feed.dart:36:19 - always_put_required_named_parameters_first
+   info - Required named parameters should be before optional named parameters - lib\models\scan_feed.dart:40:19 - always_put_required_named_parameters_first
+   info - Classes should define instance members - lib\models\scan_feed.dart:143:1 - avoid_classes_with_only_static_members
+   info - Unnecessary use of a 'double' literal - lib\models\scan_feed.dart:158:23 - prefer_int_literals
+   info - Unnecessary use of a 'double' literal - lib\models\scan_feed.dart:176:23 - prefer_int_literals
+   info - Unnecessary escape of ''' - lib\models\scan_feed.dart:180:19 - avoid_escaping_inner_quotes
+   info - Unnecessary use of a 'double' literal - lib\models\scan_feed.dart:194:23 - prefer_int_literals
+   info - Unnecessary use of a 'double' literal - lib\models\scan_feed.dart:211:23 - prefer_int_literals
+   info - Unnecessary use of a 'double' literal - lib\models\scan_feed.dart:229:23 - prefer_int_literals
+   info - Unnecessary use of a 'double' literal - lib\models\scan_feed.dart:246:23 - prefer_int_literals
+   info - Missing a required trailing comma - lib\models\scan_feed.dart:265:9 - require_trailing_commas
+   info - Missing a required trailing comma - lib\models\scan_feed.dart:269:9 - require_trailing_commas
+   info - Constructor declarations should be before non-constructor declarations - lib\models\vendor_rating.dart:18:3 - sort_constructors_first
+   info - Required named parameters should be before optional named parameters - lib\models\vendor_rating.dart:23:19 - always_put_required_named_parameters_first
+   info - Required named parameters should be before optional named parameters - lib\models\vendor_rating.dart:24:19 - always_put_required_named_parameters_first
+   info - Required named parameters should be before optional named parameters - lib\models\vendor_rating.dart:25:19 - always_put_required_named_parameters_first
+   info - Required named parameters should be before optional named parameters - lib\models\vendor_rating.dart:26:19 - always_put_required_named_parameters_first
+   info - Required named parameters should be before optional named parameters - lib\models\vendor_rating.dart:27:19 - always_put_required_named_parameters_first
+   info - Unnecessary duplication of receiver - lib\models\vendor_rating.dart:99:5 - cascade_invocations
+   info - Classes should define instance members - lib\models\vendor_rating.dart:118:1 - avoid_classes_with_only_static_members
+   info - Unnecessary escape of ''' - lib\models\vendor_rating.dart:172:15 - avoid_escaping_inner_quotes
+   info - Sort directive sections alphabetically - lib\providers\app_providers.dart:5:1 - directives_ordering
+   info - The value of the argument is redundant because it matches the default value - lib\providers\app_providers.dart:14:38 - avoid_redundant_argument_values
+   info - Catch clause should use 'on' to specify the type of exception being caught - lib\providers\app_providers.dart:45:7 - avoid_catches_without_on_clauses
+   info - Unnecessary use of a raw string - lib\providers\app_providers.dart:71:48 - unnecessary_raw_strings
+   info - Catch clause should use 'on' to specify the type of exception being caught - lib\providers\app_providers.dart:110:7 - avoid_catches_without_on_clauses
+   info - Sort directive sections alphabetically - lib\screens\device_sync_screen.dart:5:1 - directives_ordering
+warning - Unused import: '../widgets/animated_logo.dart' - lib\screens\device_sync_screen.dart:6:8 - unused_import
+   info - An 'async' function should have a 'Future' return type when it doesn't return a value - lib\screens\device_sync_screen.dart:27:8 - avoid_void_async
+   info - Unnecessary duplication of receiver - lib\screens\device_sync_screen.dart:48:5 - cascade_invocations
+warning - The value of the local variable 'connectionState' isn't used - lib\screens\device_sync_screen.dart:99:11 - unused_local_variable
+   info - Closure should be a tearoff - lib\screens\device_sync_screen.dart:276:34 - unnecessary_lambdas
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\device_sync_screen.dart:291:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\device_sync_screen.dart:294:57 - deprecated_member_use
+   info - Constructor declarations should be before non-constructor declarations - lib\screens\device_sync_screen.dart:450:9 - sort_constructors_first
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\device_sync_screen.dart:464:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\device_sync_screen.dart:465:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\device_sync_screen.dart:476:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\device_sync_screen.dart:480:44 - deprecated_member_use
+   info - Sort directive sections alphabetically - lib\screens\home_screen.dart:5:1 - directives_ordering
+   info - Missing a required trailing comma - lib\screens\home_screen.dart:57:20 - require_trailing_commas
+   info - Method invocation or property access on a 'dynamic' target - lib\screens\home_screen.dart:130:18 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - lib\screens\home_screen.dart:131:28 - avoid_dynamic_calls
+   info - Method invocation or property access on a 'dynamic' target - lib\screens\home_screen.dart:137:18 - avoid_dynamic_calls
+   info - Unnecessary use of a 'double' literal - lib\screens\home_screen.dart:144:18 - prefer_int_literals
+   info - Constructor declarations should be before non-constructor declarations - lib\screens\home_screen.dart:181:9 - sort_constructors_first
+   info - Use 'DecoratedBox' rather than a 'Container' with only a 'Decoration' - lib\screens\home_screen.dart:185:12 - use_decorated_box
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\home_screen.dart:230:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\home_screen.dart:279:38 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\home_screen.dart:316:43 - deprecated_member_use
+   info - Method invocation or property access on a 'dynamic' target - lib\screens\home_screen.dart:345:31 - avoid_dynamic_calls
+   info - Constructor declarations should be before non-constructor declarations - lib\screens\home_screen.dart:364:9 - sort_constructors_first
+   info - Sort directive sections alphabetically - lib\screens\leaderboard_screen.dart:5:1 - directives_ordering
+   info - Sort directive sections alphabetically - lib\screens\leaderboard_screen.dart:6:1 - directives_ordering
+   info - Sort directive sections alphabetically - lib\screens\leaderboard_screen.dart:7:1 - directives_ordering
+   info - Constructor declarations should be before non-constructor declarations - lib\screens\leaderboard_screen.dart:196:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\screens\leaderboard_screen.dart:250:9 - sort_constructors_first
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\leaderboard_screen.dart:279:40 - deprecated_member_use
+   info - Use a 'ColoredBox' rather than a 'Container' with only a 'Color' - lib\screens\leaderboard_screen.dart:291:28 - use_colored_box
+   info - Use 'const' with the constructor to improve performance - lib\screens\leaderboard_screen.dart:333:15 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\leaderboard_screen.dart:382:23 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\leaderboard_screen.dart:383:23 - deprecated_member_use
+   info - Constructor declarations should be before non-constructor declarations - lib\screens\leaderboard_screen.dart:472:9 - sort_constructors_first
+   info - Use 'const' with the constructor to improve performance - lib\screens\leaderboard_screen.dart:533:27 - prefer_const_constructors
+   info - Use 'const' with the constructor to improve performance - lib\screens\leaderboard_screen.dart:547:29 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\leaderboard_screen.dart:608:52 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\leaderboard_screen.dart:610:54 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\leaderboard_screen.dart:611:57 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\leaderboard_screen.dart:655:56 - deprecated_member_use
+   info - Constructor declarations should be before non-constructor declarations - lib\screens\leaderboard_screen.dart:753:9 - sort_constructors_first
+   info - Sort directive sections alphabetically - lib\screens\main_layout.dart:5:1 - directives_ordering
+   info - Sort directive sections alphabetically - lib\screens\main_layout.dart:7:1 - directives_ordering
+   info - Sort directive sections alphabetically - lib\screens\main_layout.dart:10:1 - directives_ordering
+   info - The method is used to change a property - lib\screens\main_layout.dart:36:8 - use_setters_to_change_properties
+   info - Constructor declarations should be before non-constructor declarations - lib\screens\main_layout.dart:95:9 - sort_constructors_first
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\main_layout.dart:112:33 - deprecated_member_use
+   info - Constructor declarations should be before non-constructor declarations - lib\screens\main_layout.dart:172:9 - sort_constructors_first
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\main_layout.dart:187:39 - deprecated_member_use
+   info - Constructor declarations should be before non-constructor declarations - lib\screens\main_layout.dart:205:9 - sort_constructors_first
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\main_layout.dart:226:44 - deprecated_member_use
+   info - Sort directive sections alphabetically - lib\screens\scan_screen.dart:6:1 - directives_ordering
+warning - Unused import: '../providers/app_providers.dart' - lib\screens\scan_screen.dart:6:8 - unused_import
+   info - Sort directive sections alphabetically - lib\screens\scan_screen.dart:7:1 - directives_ordering
+warning - The value of the field '_showResult' isn't used - lib\screens\scan_screen.dart:22:8 - unused_field
+   info - An 'async' function should have a 'Future' return type when it doesn't return a value - lib\screens\scan_screen.dart:24:8 - avoid_void_async
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\scan_screen.dart:123:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\scan_screen.dart:141:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\scan_screen.dart:179:56 - deprecated_member_use
+   info - An 'async' function should have a 'Future' return type when it doesn't return a value - lib\screens\scan_screen.dart:273:8 - avoid_void_async
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\scan_screen.dart:318:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\scan_screen.dart:319:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\scan_screen.dart:375:70 - deprecated_member_use
+   info - Constructor declarations should be before non-constructor declarations - lib\screens\scan_screen.dart:552:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\screens\scan_screen.dart:589:9 - sort_constructors_first
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\scan_screen.dart:616:63 - deprecated_member_use
+   info - Constructor declarations should be before non-constructor declarations - lib\screens\scan_screen.dart:663:9 - sort_constructors_first
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\scan_screen.dart:680:44 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\scan_screen.dart:711:21 - prefer_const_constructors
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\scan_screen.dart:728:54 - deprecated_member_use
+   info - Sort directive sections alphabetically - lib\screens\screens.dart:5:1 - directives_ordering
+   info - Sort directive sections alphabetically - lib\screens\screens.dart:6:1 - directives_ordering
+   info - Sort directive sections alphabetically - lib\screens\screens.dart:7:1 - directives_ordering
+   info - Sort directive sections alphabetically - lib\screens\screens.dart:10:1 - directives_ordering
+   info - Sort directive sections alphabetically - lib\screens\settings_screen.dart:5:1 - directives_ordering
+warning - Unused import: '../widgets/circular_progress.dart' - lib\screens\settings_screen.dart:6:8 - unused_import
+   info - Use 'const' with the constructor to improve performance - lib\screens\settings_screen.dart:52:19 - prefer_const_constructors
+   info - 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor instead. This feature was deprecated after v3.31.0-2.0.pre - lib\screens\settings_screen.dart:65:23 - deprecated_member_use
+   info - Use 'const' with the constructor to improve performance - lib\screens\settings_screen.dart:85:19 - prefer_const_constructors
+   info - Constructor declarations should be before non-constructor declarations - lib\screens\settings_screen.dart:168:9 - sort_constructors_first
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\settings_screen.dart:238:44 - deprecated_member_use
+   info - Constructor declarations should be before non-constructor declarations - lib\screens\settings_screen.dart:258:9 - sort_constructors_first
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\settings_screen.dart:280:48 - deprecated_member_use
+   info - Constructor declarations should be before non-constructor declarations - lib\screens\settings_screen.dart:416:3 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\screens\settings_screen.dart:462:9 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\screens\settings_screen.dart:485:9 - sort_constructors_first
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\settings_screen.dart:506:42 - deprecated_member_use
+   info - Missing a required trailing comma - lib\screens\splash_screen.dart:53:6 - require_trailing_commas
+   info - Unnecessary use of a 'double' literal - lib\screens\splash_screen.dart:58:12 - prefer_int_literals
+   info - Missing a required trailing comma - lib\screens\splash_screen.dart:62:6 - require_trailing_commas
+   info - Missing a required trailing comma - lib\screens\splash_screen.dart:71:6 - require_trailing_commas
+   info - The value of the argument is redundant because it matches the default value - lib\utils\app_theme.dart:73:20 - avoid_redundant_argument_values
+   info - The value of the argument is redundant because it matches the default value - lib\utils\app_theme.dart:74:22 - avoid_redundant_argument_values
+   info - The value of the argument is redundant because it matches the default value - lib\utils\app_theme.dart:75:20 - avoid_redundant_argument_values
+  error - The argument type 'CardTheme' can't be assigned to the parameter type 'CardThemeData?'.  - lib\utils\app_theme.dart:110:18 - argument_type_not_assignable
+   info - The value of the argument is redundant because it matches the default value - lib\utils\app_theme.dart:130:66 - avoid_redundant_argument_values
+   info - The value of the argument is redundant because it matches the default value - lib\utils\app_theme.dart:138:65 - avoid_redundant_argument_values
+   info - Classes should define instance members - lib\utils\app_theme.dart:276:1 - avoid_classes_with_only_static_members
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\utils\app_theme.dart:280:31 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\utils\app_theme.dart:288:40 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\utils\app_theme.dart:296:31 - deprecated_member_use
+   info - Classes should define instance members - lib\utils\app_theme.dart:311:1 - avoid_classes_with_only_static_members
+   info - Place 'dart:' imports before other imports - lib\widgets\animated_logo.dart:2:1 - directives_ordering
+   info - Constructor declarations should be before non-constructor declarations - lib\widgets\animated_logo.dart:11:3 - sort_constructors_first
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widgets\animated_logo.dart:27:29 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widgets\animated_logo.dart:36:29 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widgets\animated_logo.dart:41:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widgets\animated_logo.dart:53:39 - deprecated_member_use
+warning - The value of the local variable 'endAngle' isn't used - lib\widgets\animated_logo.dart:109:13 - unused_local_variable
+   info - Unnecessary duplication of receiver - lib\widgets\animated_logo.dart:112:7 - cascade_invocations
+   info - Unnecessary duplication of receiver - lib\widgets\animated_logo.dart:133:5 - cascade_invocations
+   info - Unnecessary duplication of receiver - lib\widgets\animated_logo.dart:141:5 - cascade_invocations
+   info - Unnecessary duplication of receiver - lib\widgets\animated_logo.dart:148:5 - cascade_invocations
+   info - Use 'const' with the constructor to improve performance - lib\widgets\animated_logo.dart:151:22 - prefer_const_constructors
+   info - Use 'const' literals as arguments to constructors of '@immutable' classes - lib\widgets\animated_logo.dart:152:15 - prefer_const_literals_to_create_immutables
+   info - Unnecessary duplication of receiver - lib\widgets\animated_logo.dart:178:5 - cascade_invocations
+   info - Unnecessary duplication of receiver - lib\widgets\animated_logo.dart:184:5 - cascade_invocations
+   info - Unnecessary duplication of receiver - lib\widgets\animated_logo.dart:190:5 - cascade_invocations
+   info - Unnecessary duplication of receiver - lib\widgets\animated_logo.dart:196:5 - cascade_invocations
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widgets\animated_logo.dart:199:41 - deprecated_member_use
+   info - Constructor declarations should be before non-constructor declarations - lib\widgets\animated_logo.dart:228:9 - sort_constructors_first
+   info - Unnecessary use of a 'double' literal - lib\widgets\animated_logo.dart:245:29 - prefer_int_literals
+   info - Unnecessary use of a 'double' literal - lib\widgets\animated_logo.dart:256:23 - prefer_int_literals
+   info - Constructor declarations should be before non-constructor declarations - lib\widgets\animated_logo.dart:266:9 - sort_constructors_first
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widgets\animated_logo.dart:280:42 - deprecated_member_use
+   info - Place 'dart:' imports before other imports - lib\widgets\circular_progress.dart:2:1 - directives_ordering
+   info - Constructor declarations should be before non-constructor declarations - lib\widgets\circular_progress.dart:16:9 - sort_constructors_first
+   info - Required named parameters should be before optional named parameters - lib\widgets\circular_progress.dart:18:19 - always_put_required_named_parameters_first
+   info - Required named parameters should be before optional named parameters - lib\widgets\circular_progress.dart:19:19 - always_put_required_named_parameters_first
+   info - Required named parameters should be before optional named parameters - lib\widgets\circular_progress.dart:20:19 - always_put_required_named_parameters_first
+   info - Required named parameters should be before optional named parameters - lib\widgets\circular_progress.dart:21:19 - always_put_required_named_parameters_first
+   info - Required named parameters should be before optional named parameters - lib\widgets\circular_progress.dart:22:19 - always_put_required_named_parameters_first
+   info - Constructor declarations should be before non-constructor declarations - lib\widgets\circular_progress.dart:92:3 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\widgets\circular_progress.dart:145:9 - sort_constructors_first
+   info - Required named parameters should be before optional named parameters - lib\widgets\circular_progress.dart:147:19 - always_put_required_named_parameters_first
+   info - Constructor declarations should be before non-constructor declarations - lib\widgets\circular_progress.dart:196:9 - sort_constructors_first
+   info - Required named parameters should be before optional named parameters - lib\widgets\circular_progress.dart:198:19 - always_put_required_named_parameters_first
+   info - Required named parameters should be before optional named parameters - lib\widgets\circular_progress.dart:199:19 - always_put_required_named_parameters_first
+   info - Constructor declarations should be before non-constructor declarations - lib\widgets\circular_progress.dart:260:3 - sort_constructors_first
+   info - Constructor declarations should be before non-constructor declarations - lib\widgets\recent_scan_card.dart:11:9 - sort_constructors_first
+   info - Required named parameters should be before optional named parameters - lib\widgets\recent_scan_card.dart:13:19 - always_put_required_named_parameters_first
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widgets\recent_scan_card.dart:80:44 - deprecated_member_use
+   info - Constructor declarations should be before non-constructor declarations - lib\widgets\recent_scan_card.dart:137:9 - sort_constructors_first
+   info - Required named parameters should be before optional named parameters - lib\widgets\recent_scan_card.dart:139:19 - always_put_required_named_parameters_first
+   info - Required named parameters should be before optional named parameters - lib\widgets\recent_scan_card.dart:140:19 - always_put_required_named_parameters_first
+   info - Required named parameters should be before optional named parameters - lib\widgets\recent_scan_card.dart:141:19 - always_put_required_named_parameters_first
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widgets\recent_scan_card.dart:166:61 - deprecated_member_use
+   info - Constructor declarations should be before non-constructor declarations - lib\widgets\recent_scan_card.dart:222:9 - sort_constructors_first
+   info - Required named parameters should be before optional named parameters - lib\widgets\recent_scan_card.dart:224:19 - always_put_required_named_parameters_first
+   info - Required named parameters should be before optional named parameters - lib\widgets\recent_scan_card.dart:225:19 - always_put_required_named_parameters_first
+   info - Constructor declarations should be before non-constructor declarations - lib\widgets\recent_scan_card.dart:268:9 - sort_constructors_first
+   info - Required named parameters should be before optional named parameters - lib\widgets\recent_scan_card.dart:270:19 - always_put_required_named_parameters_first
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widgets\recent_scan_card.dart:283:38 - deprecated_member_use
+   info - Place 'dart:' imports before other imports - lib\widgets\scanning_reticle.dart:2:1 - directives_ordering
+   info - Constructor declarations should be before non-constructor declarations - lib\widgets\scanning_reticle.dart:10:9 - sort_constructors_first
+   info - Missing a required trailing comma - lib\widgets\scanning_reticle.dart:38:6 - require_trailing_commas
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widgets\scanning_reticle.dart:77:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widgets\scanning_reticle.dart:78:47 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widgets\scanning_reticle.dart:84:54 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widgets\scanning_reticle.dart:102:46 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widgets\scanning_reticle.dart:153:42 - deprecated_member_use
+   info - Use 'const' for final variables initialized to a constant value - lib\widgets\scanning_reticle.dart:173:5 - prefer_const_declarations
+   info - Unnecessary duplication of receiver - lib\widgets\scanning_reticle.dart:227:5 - cascade_invocations
+   info - Unnecessary duplication of receiver - lib\widgets\scanning_reticle.dart:231:5 - cascade_invocations
+   info - Unnecessary duplication of receiver - lib\widgets\scanning_reticle.dart:237:5 - cascade_invocations
+   info - Unnecessary duplication of receiver - lib\widgets\scanning_reticle.dart:241:5 - cascade_invocations
+   info - Constructor declarations should be before non-constructor declarations - lib\widgets\scanning_reticle.dart:259:9 - sort_constructors_first
+   info - Required named parameters should be before optional named parameters - lib\widgets\scanning_reticle.dart:261:19 - always_put_required_named_parameters_first
+   info - Required named parameters should be before optional named parameters - lib\widgets\scanning_reticle.dart:262:19 - always_put_required_named_parameters_first
+   info - Required named parameters should be before optional named parameters - lib\widgets\scanning_reticle.dart:263:19 - always_put_required_named_parameters_first
+   info - Constructor declarations should be before non-constructor declarations - lib\widgets\scanning_reticle.dart:318:3 - sort_constructors_first
+   info - Use 'const' for final variables initialized to a constant value - lib\widgets\scanning_reticle.dart:328:5 - prefer_const_declarations
+   info - Unnecessary duplication of receiver - lib\widgets\scanning_reticle.dart:335:5 - cascade_invocations
+   info - Unnecessary duplication of receiver - lib\widgets\scanning_reticle.dart:336:5 - cascade_invocations
+   info - Unnecessary duplication of receiver - lib\widgets\scanning_reticle.dart:337:5 - cascade_invocations
+   info - Unnecessary duplication of receiver - lib\widgets\scanning_reticle.dart:340:5 - cascade_invocations
+   info - Unnecessary duplication of receiver - lib\widgets\scanning_reticle.dart:341:5 - cascade_invocations
+   info - Unnecessary duplication of receiver - lib\widgets\scanning_reticle.dart:342:5 - cascade_invocations
+   info - Unnecessary duplication of receiver - lib\widgets\scanning_reticle.dart:343:5 - cascade_invocations
+   info - Unnecessary duplication of receiver - lib\widgets\scanning_reticle.dart:349:5 - cascade_invocations
+   info - Unnecessary duplication of receiver - lib\widgets\scanning_reticle.dart:350:5 - cascade_invocations
+   info - Unnecessary duplication of receiver - lib\widgets\scanning_reticle.dart:351:5 - cascade_invocations
+   info - Unnecessary duplication of receiver - lib\widgets\scanning_reticle.dart:352:5 - cascade_invocations
+   info - Unnecessary duplication of receiver - lib\widgets\scanning_reticle.dart:355:5 - cascade_invocations
+   info - Unnecessary duplication of receiver - lib\widgets\scanning_reticle.dart:356:5 - cascade_invocations
+   info - Unnecessary duplication of receiver - lib\widgets\scanning_reticle.dart:360:5 - cascade_invocations
+   info - Unnecessary duplication of receiver - lib\widgets\scanning_reticle.dart:361:5 - cascade_invocations
+   info - Constructor declarations should be before non-constructor declarations - lib\widgets\star_rating.dart:15:9 - sort_constructors_first
+   info - Required named parameters should be before optional named parameters - lib\widgets\star_rating.dart:17:19 - always_put_required_named_parameters_first
+   info - Constructor declarations should be before non-constructor declarations - lib\widgets\star_rating.dart:63:9 - sort_constructors_first
+   info - Required named parameters should be before optional named parameters - lib\widgets\star_rating.dart:65:19 - always_put_required_named_parameters_first
+   info - Constructor declarations should be before non-constructor declarations - lib\widgets\star_rating.dart:123:9 - sort_constructors_first
+   info - Required named parameters should be before optional named parameters - lib\widgets\star_rating.dart:125:19 - always_put_required_named_parameters_first
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\widgets\star_rating.dart:138:34 - deprecated_member_use
+   info - Dependencies not sorted alphabetically - pubspec.yaml:19:3 - sort_pub_dependencies
+warning - The asset directory 'assets/images/' doesn't exist - pubspec.yaml:33:7 - asset_directory_does_not_exist
+warning - The asset directory 'assets/icons/' doesn't exist - pubspec.yaml:34:7 - asset_directory_does_not_exist
+   info - The imported package 'flutter_test' isn't a dependency of the importing package - test\widget_test.dart:5:8 - depend_on_referenced_packages
+  error - Target of URI doesn't exist: 'package:flutter_test/flutter_test.dart' - test\widget_test.dart:5:8 - uri_does_not_exist
+  error - The function 'testWidgets' isn't defined - test\widget_test.dart:10:3 - undefined_function
+  error - Undefined class 'WidgetTester' - test\widget_test.dart:10:47 - undefined_class
+  error - The function 'expect' isn't defined - test\widget_test.dart:22:5 - undefined_function
+  error - Undefined name 'find' - test\widget_test.dart:22:12 - undefined_identifier
+  error - Undefined name 'findsOneWidget' - test\widget_test.dart:22:38 - undefined_identifier
+
+flutter : 271 issues 
+found. (ran in 5.0s)
+At line:1 char:1
++ flutter analyze 
+2>&1 | Tee-Object 
+-FilePath "analyze_ou
+tput.txt"; Get ...
++ 
+~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (271 iss   
+ ues found. (ran     
+in 5.0s):String)     
+[], RemoteExcep    
+tion
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
