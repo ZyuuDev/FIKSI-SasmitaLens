@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../utils/app_theme.dart';
+
 import '../providers/app_providers.dart';
+import '../utils/app_theme.dart';
 import '../widgets/circular_progress.dart';
 import '../widgets/recent_scan_card.dart';
 

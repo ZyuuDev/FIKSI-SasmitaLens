@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../utils/app_theme.dart';
+
 import '../providers/app_providers.dart';
-import '../widgets/animated_logo.dart';
+import '../utils/app_theme.dart';
 
 /// Device Sync Screen
 /// Input screen for connecting Sasmita Lens device

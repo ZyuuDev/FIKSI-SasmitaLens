@@ -6,8 +6,7 @@ import '../utils/app_theme.dart';
 class StarRating extends StatelessWidget {
 
   const StarRating({
-    super.key,
-    required this.rating,
+    required this.rating, super.key,
     this.maxRating = 5,
     this.onRatingChanged,
     this.size = 32,
@@ -55,8 +54,7 @@ class StarRating extends StatelessWidget {
 class StarRatingDisplay extends StatelessWidget {
 
   const StarRatingDisplay({
-    super.key,
-    required this.rating,
+    required this.rating, super.key,
     this.maxRating = 5,
     this.size = 16,
     this.activeColor,
@@ -118,8 +116,7 @@ class StarRatingDisplay extends StatelessWidget {
 class RatingBadge extends StatelessWidget {
 
   const RatingBadge({
-    super.key,
-    required this.rating,
+    required this.rating, super.key,
     this.reviewCount = 0,
     this.isSmall = false,
   });

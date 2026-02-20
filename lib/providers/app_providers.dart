@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/fruit_analysis.dart';
-import '../models/vendor_rating.dart';
 import '../models/scan_feed.dart';
+import '../models/vendor_rating.dart';
 
 // ==================== Navigation State ====================
 

@@ -7,12 +7,7 @@ import '../utils/app_theme.dart';
 class CircularProgressWidget extends StatelessWidget {
 
   const CircularProgressWidget({
-    super.key,
-    required this.value,
-    required this.displayValue,
-    required this.label,
-    required this.sublabel,
-    required this.color,
+    required this.value, required this.displayValue, required this.label, required this.sublabel, required this.color, super.key,
     this.isCheckmark = false,
     this.size = 90,
   });
@@ -141,8 +136,7 @@ class _CircularProgressPainter extends CustomPainter {
 class QualityScoreCircle extends StatelessWidget {
 
   const QualityScoreCircle({
-    super.key,
-    required this.score,
+    required this.score, super.key,
     this.size = 70,
   });
   final double score; // 0-100
@@ -192,9 +186,7 @@ class QualityScoreCircle extends StatelessWidget {
 class ConnectionIndicator extends StatelessWidget { // 0-100
 
   const ConnectionIndicator({
-    super.key,
-    required this.isConnected,
-    required this.batteryLevel,
+    required this.isConnected, required this.batteryLevel, super.key,
   });
   final bool isConnected;
   final double batteryLevel;

@@ -3,5 +3,5 @@
 library;
 
 export 'fruit_analysis.dart';
-export 'vendor_rating.dart';
 export 'scan_feed.dart';
+export 'vendor_rating.dart';

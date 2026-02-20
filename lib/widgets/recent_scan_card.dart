@@ -8,8 +8,7 @@ import '../utils/app_theme.dart';
 class RecentScanCard extends StatelessWidget {
 
   const RecentScanCard({
-    super.key,
-    required this.scan,
+    required this.scan, super.key,
   });
   final Map<String, dynamic> scan;
 
@@ -128,10 +127,7 @@ class RecentScanCard extends StatelessWidget {
 class MetricCard extends StatelessWidget {
 
   const MetricCard({
-    super.key,
-    required this.icon,
-    required this.label,
-    required this.value,
+    required this.icon, required this.label, required this.value, super.key,
     this.sublabel,
     this.iconColor,
     this.valueColor,
@@ -216,9 +212,7 @@ class MetricCard extends StatelessWidget {
 class InfoRow extends StatelessWidget {
 
   const InfoRow({
-    super.key,
-    required this.label,
-    required this.value,
+    required this.label, required this.value, super.key,
     this.valueColor,
     this.trailing,
   });
@@ -263,8 +257,7 @@ class InfoRow extends StatelessWidget {
 class StatusBadge extends StatelessWidget {
 
   const StatusBadge({
-    super.key,
-    required this.text,
+    required this.text, super.key,
     this.type = StatusType.success,
     this.isSmall = false,
   });

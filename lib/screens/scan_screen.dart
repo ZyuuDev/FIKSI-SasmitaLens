@@ -1,10 +1,11 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../utils/app_theme.dart';
-import '../providers/app_providers.dart';
+
 import '../models/fruit_analysis.dart';
+import '../utils/app_theme.dart';
 import '../widgets/scanning_reticle.dart';
 import '../widgets/star_rating.dart';
 

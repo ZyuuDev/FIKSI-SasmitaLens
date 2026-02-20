@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../utils/app_theme.dart';
+
 import '../providers/app_providers.dart';
-import 'home_screen.dart';
+import '../utils/app_theme.dart';
 import 'device_sync_screen.dart';
+import 'home_screen.dart';
 import 'leaderboard_screen.dart';
-import 'settings_screen.dart';
 import 'scan_screen.dart';
+import 'settings_screen.dart';
 
 /// Main Layout with Custom Bottom Navigation
 /// Features 5 navigation items with center FloatingActionButton

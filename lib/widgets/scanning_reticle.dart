@@ -176,7 +176,7 @@ class CornerBracketPainter extends CustomPainter {
     _drawCorner(
       canvas,
       paint,
-      Offset(strokeWidth, strokeWidth),
+      const Offset(strokeWidth, strokeWidth),
       cornerLength,
       true,
       true,
@@ -254,10 +254,7 @@ class CornerBracketPainter extends CustomPainter {
 class AnimatedScanFrame extends StatefulWidget {
 
   const AnimatedScanFrame({
-    super.key,
-    required this.width,
-    required this.height,
-    required this.child,
+    required this.width, required this.height, required this.child, super.key,
   });
   final double width;
   final double height;

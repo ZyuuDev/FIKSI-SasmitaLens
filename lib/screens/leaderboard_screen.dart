@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../utils/app_theme.dart';
-import '../providers/app_providers.dart';
-import '../models/vendor_rating.dart';
+
 import '../models/scan_feed.dart';
+import '../models/vendor_rating.dart';
+import '../providers/app_providers.dart';
+import '../utils/app_theme.dart';
 import '../widgets/star_rating.dart';
 
 /// Leaderboard Screen

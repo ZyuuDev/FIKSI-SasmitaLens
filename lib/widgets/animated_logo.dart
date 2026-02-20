@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
 import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
+
 import '../utils/app_theme.dart';
 
 /// Custom Painter for Animated Logo
