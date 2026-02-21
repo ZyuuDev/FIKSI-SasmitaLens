@@ -200,39 +200,40 @@ class _PodiumSection extends StatelessWidget {
   Widget build(BuildContext context) {
     if (vendors.length < 3) return const SizedBox.shrink();
 
-    return SizedBox(
-      height: 160,
+    // Use a Row where rank-1 is visually higher via different topPadding offsets.
+    // This avoids fixed-height containers that cause overflow.
+    return IntrinsicHeight(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // 2nd Place
+          // 2nd Place (slightly lower than 1st)
           _PodiumItem(
             vendor: vendors[1],
             rank: 2,
-            height: 100,
             color: AppTheme.accentYellow,
+            topOffset: 40,
           ),
-          
-          const SizedBox(width: 16),
-          
-          // 1st Place
+
+          const SizedBox(width: 20),
+
+          // 1st Place (highest)
           _PodiumItem(
             vendor: vendors[0],
             rank: 1,
-            height: 130,
             color: AppTheme.primaryGreen,
             isFirst: true,
+            topOffset: 0,
           ),
-          
-          const SizedBox(width: 16),
-          
-          // 3rd Place
+
+          const SizedBox(width: 20),
+
+          // 3rd Place (lowest)
           _PodiumItem(
             vendor: vendors[2],
             rank: 3,
-            height: 80,
             color: AppTheme.accentOrange,
+            topOffset: 60,
           ),
         ],
       ),
@@ -241,157 +242,160 @@ class _PodiumSection extends StatelessWidget {
 }
 
 /// Podium Item Widget
+/// Uses [topOffset] to push the item down, creating a visual podium height effect
+/// without requiring a fixed-height bar that causes overflow.
 class _PodiumItem extends StatelessWidget {
 
   const _PodiumItem({
     required this.vendor,
     required this.rank,
-    required this.height,
     required this.color,
+    required this.topOffset,
     this.isFirst = false,
   });
   final VendorRating vendor;
   final int rank;
-  final double height;
   final Color color;
+  final double topOffset;
   final bool isFirst;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        // Avatar
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            Container(
-              width: isFirst ? 70 : 55,
-              height: isFirst ? 70 : 55,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: color,
-                  width: isFirst ? 4 : 3,
-                ),
-                boxShadow: isFirst
-                    ? [
-                        BoxShadow(
-                          color: color.withOpacity(0.4),
-                          blurRadius: 15,
-                          spreadRadius: 2,
-                        ),
-                      ]
-                    : null,
+    final double avatarSize = isFirst ? 80 : 62;
+    final double fontSize = isFirst ? 13 : 11;
+
+    return Padding(
+      padding: EdgeInsets.only(top: topOffset),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Crown icon for 1st place (outside Stack, no overflow risk)
+          if (isFirst)
+            const Padding(
+              padding: EdgeInsets.only(bottom: 4),
+              child: Icon(
+                Icons.emoji_events,
+                color: AppTheme.accentYellow,
+                size: 26,
               ),
-              child: ClipOval(
-                child: Image.network(
-                  vendor.avatarUrl ?? 'https://i.pravatar.cc/150',
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return ColoredBox(
-                      color: AppTheme.backgroundCard,
-                      child: Icon(
-                        Icons.store,
-                        color: color,
-                        size: isFirst ? 32 : 24,
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-            
-            // Rank badge
-            Positioned(
-              top: 0,
-              child: Container(
-                width: isFirst ? 24 : 20,
-                height: isFirst ? 24 : 20,
+            )
+          else
+            const SizedBox(height: 30), // align baseline with crown
+
+          // Avatar with rank badge
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // Avatar circle
+              Container(
+                width: avatarSize,
+                height: avatarSize,
                 decoration: BoxDecoration(
-                  color: color,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: AppTheme.backgroundDark,
-                    width: 2,
+                    color: color,
+                    width: isFirst ? 3.5 : 2.5,
+                  ),
+                  boxShadow: isFirst
+                      ? [
+                          BoxShadow(
+                            color: color.withOpacity(0.45),
+                            blurRadius: 18,
+                            spreadRadius: 3,
+                          ),
+                        ]
+                      : null,
+                ),
+                child: ClipOval(
+                  child: Image.network(
+                    vendor.avatarUrl ?? 'https://i.pravatar.cc/150',
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return ColoredBox(
+                        color: AppTheme.backgroundCard,
+                        child: Icon(
+                          Icons.store,
+                          color: color,
+                          size: isFirst ? 36 : 26,
+                        ),
+                      );
+                    },
                   ),
                 ),
+              ),
+
+              // Rank badge (bottom-center)
+              Positioned(
+                bottom: -8,
+                left: 0,
+                right: 0,
                 child: Center(
-                  child: Text(
-                    '$rank',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: isFirst ? 12 : 10,
-                      fontWeight: FontWeight.bold,
+                  child: Container(
+                    width: isFirst ? 24 : 20,
+                    height: isFirst ? 24 : 20,
+                    decoration: BoxDecoration(
+                      color: color,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: AppTheme.backgroundDark,
+                        width: 2,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '$rank',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: isFirst ? 12 : 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          // Vendor Name
+          SizedBox(
+            width: 90,
+            child: Text(
+              vendor.name,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontSize: fontSize,
+                  ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-            
-            // Crown for 1st place
-            if (isFirst)
-              const Positioned(
-                top: -15,
-                child: Icon(
-                  Icons.emoji_events,
-                  color: AppTheme.accentYellow,
-                  size: 28,
-                ),
-              ),
-          ],
-        ),
-        
-        const SizedBox(height: 12),
-        
-        // Vendor Name
-        SizedBox(
-          width: 80,
-          child: Text(
-            vendor.name,
-            textAlign: TextAlign.center,
+          ),
+
+          const SizedBox(height: 4),
+
+          // Points
+          Text(
+            '${_formatPoints(vendor.totalPoints)} pts',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontWeight: FontWeight.w600,
+                  color: isFirst ? color : AppTheme.textMuted,
+                  fontWeight: isFirst ? FontWeight.w700 : FontWeight.w500,
+                  fontSize: isFirst ? 13 : 11,
                 ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
           ),
-        ),
-        
-        const SizedBox(height: 4),
-        
-        // Points
-        Text(
-          '${vendor.totalPoints.toStringAsFixed(0)} pts',
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: color,
-                fontWeight: FontWeight.w600,
-              ),
-        ),
-        
-        const SizedBox(height: 8),
-        
-        // Podium bar
-        Container(
-          width: 70,
-          height: height,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                color.withOpacity(0.6),
-                color.withOpacity(0.2),
-              ],
-            ),
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(12),
-              topRight: Radius.circular(12),
-            ),
-          ),
-        ),
-      ],
+        ],
+      ),
     );
+  }
+
+  /// Format large numbers: 9840 → 9.8k
+  String _formatPoints(int points) {
+    if (points >= 1000) {
+      return '${(points / 1000).toStringAsFixed(1)}k';
+    }
+    return points.toString();
   }
 }
 
