@@ -62,7 +62,7 @@ class SettingsScreen extends ConsumerWidget {
                       onChanged: (value) {
                         ref.read(notificationsEnabledProvider.notifier).state = value;
                       },
-                      activeThumbColor: AppTheme.primaryGreen,
+                      activeColor: AppTheme.primaryGreen,
                     ),
                   ),
                   
