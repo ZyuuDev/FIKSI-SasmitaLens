@@ -77,6 +77,46 @@ lib/
     └── star_rating.dart
 ```
 
+
+# Sasmita Lens - System Requirements
+
+This document outlines the minimum and recommended hardware/software specifications for running the Sasmita Lens application.
+
+## 📱 Mobile Requirements
+
+| Specification        | Minimum Requirement               | Recommended (Optimal Experience)    |
+| :------------------- | :-------------------------------- | :---------------------------------- |
+| **Operating System** | Android 5.0 (Lollipop) / iOS 12.0 | Android 10.0+ / iOS 15.0+           |
+| **RAM**              | 2 GB                              | 4 GB or higher                      |
+| **Storage**          | 100 MB free space                 | 250 MB free space                   |
+| **Hardware**         | Working back camera (fixed focus) | Autofocus camera with macro support |
+
+## 💻 Desktop Requirements
+
+| Specification | Minimum Requirement        | Recommended                    |
+| :------------ | :------------------------- | :----------------------------- |
+| **Windows**   | Windows 10 (64-bit)        | Windows 11                     |
+| **macOS**     | macOS 10.14 (Mojave)       | macOS 12.0 (Monterey) or newer |
+| **Linux**     | Ubuntu 18.04 or compatible | Latest LTS version             |
+| **RAM**       | 4 GB                       | 8 GB                           |
+
+## 🌐 Web Browser Compatibility
+
+Sasmita Lens is optimized for the following modern web browsers:
+
+- **Google Chrome**: 84+
+- **Mozilla Firefox**: 80+
+- **Apple Safari**: 13.1+
+- **Microsoft Edge**: 84+
+
+## ⚙️ Additional Requirements
+
+- **Network**: Stable internet connection (WiFi or 4G/5G) is required for device synchronization and leaderboard updates.
+- **Sensors**: Camera permission is essential for fruit quality analysis features.
+- **Visuals**: Due to high-fidelity animations and glassmorphism effects, a device with a dedicated GPU or modern integrated graphics is recommended for smooth transitions.
+
+---
+
 ## Getting Started
 
 ### Prerequisites
