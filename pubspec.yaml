@@ -1,4 +1,4 @@
-name: sasmita_lens
+name: Sasmita_Lens
 description: Futuristic AgTech Solutions - Fruit Quality Analysis App
 
 publish_to: "none"
@@ -29,6 +29,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.4.0
   flutter_lints: ^3.0.0
 
 flutter:
@@ -37,3 +39,20 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/logo_sasmitalens_crop.png"
+
+  adaptive_icon_background: "#FFFFFF" # Warna background putih (sesuai logo Anda)
+  adaptive_icon_foreground: "assets/icons/logo_sasmitalens_crop.png"
+
+flutter_native_splash:
+  color: "#FFFFFF" # Warna background splash screen
+  image: assets/icons/logo_sasmitalens_crop.png # Gunakan gambar yang sudah di-crop!
+  
+  # Opsi ini sangat penting agar Android 12+ tidak mengecilkan logo!
+  android_12:
+    image: assets/icons/logo_sasmitalens_crop.png
+    color: "#FFFFFF"
