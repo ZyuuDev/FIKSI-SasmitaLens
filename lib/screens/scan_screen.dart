@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/fruit_analysis.dart';
+import '../providers/bluetooth_service.dart';
 import '../utils/app_theme.dart';
 import '../widgets/scanning_reticle.dart';
 import '../widgets/star_rating.dart';
@@ -20,33 +21,51 @@ class ScanScreen extends ConsumerStatefulWidget {
 
 class _ScanScreenState extends ConsumerState<ScanScreen> {
   bool _isScanning = false;
-  bool _showResult = false;
 
   Future<void> _startScan() async {
-    setState(() {
-      _isScanning = true;
-    });
+    // Cek apakah ESP32 terhubung via Bluetooth
+    final btManager  = ref.read(bluetoothManagerProvider);
+    final terhubung  = btManager.terhubung;
+    final dataSensor = btManager.dataTerakhir;
 
-    // Simulate scanning process
+    if (!terhubung) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('⚠️ Hubungkan ESP32 SASMITA LENS dulu di tab Device'),
+            backgroundColor: AppTheme.accentOrange,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+      return;
+    }
+
+    setState(() => _isScanning = true);
+
+    // Tunggu 2 detik untuk pastikan data terbaru masuk dari ESP32
     await Future.delayed(const Duration(seconds: 2));
 
-    setState(() {
-      _isScanning = false;
-      _showResult = true;
-    });
+    setState(() => _isScanning = false);
 
-    // Show result bottom sheet
-    if (mounted) {
-      _showResultSheet();
+    if (mounted && dataSensor != null) {
+      _showResultSheet(dataSensor.toFruitAnalysis());
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Belum ada data dari sensor. Coba lagi.'),
+          backgroundColor: AppTheme.statusError,
+        ),
+      );
     }
   }
 
-  void _showResultSheet() {
+  void _showResultSheet(FruitAnalysis result) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => const ScanResultSheet(),
+      builder: (context) => ScanResultSheet(result: result),
     );
   }
 
@@ -157,7 +176,11 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
                               .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.2, 1.2)),
                           const SizedBox(width: 8),
                           Text(
-                            _isScanning ? 'Analyzing...' : 'AI Analysis Active',
+                            _isScanning
+                                ? 'Menganalisis Sensor...'
+                                : ref.watch(btTerhubungProvider)
+                                    ? 'Sensor Aktif — Siap Scan'
+                                    : 'Hubungkan ESP32 Dulu',
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                   color: AppTheme.textPrimary,
                                 ),
@@ -252,9 +275,10 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
 }
 
 /// Scan Result Sheet
-/// Glassmorphism bottom sheet with fruit analysis data
+/// Glassmorphism bottom sheet dengan data nyata dari ESP32
 class ScanResultSheet extends ConsumerStatefulWidget {
-  const ScanResultSheet({super.key});
+  const ScanResultSheet({super.key, required this.result});
+  final FruitAnalysis result;
 
   @override
   ConsumerState<ScanResultSheet> createState() => _ScanResultSheetState();
@@ -306,8 +330,8 @@ class _ScanResultSheetState extends ConsumerState<ScanResultSheet> {
 
   @override
   Widget build(BuildContext context) {
-    // Mock scan result
-    final result = FruitAnalysis.mock();
+    // Data real dari ESP32 via Bluetooth
+    final result = widget.result;
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.85,

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers/app_providers.dart';
+import '../providers/bluetooth_service.dart';
 import '../utils/app_theme.dart';
 
-/// Device Sync Screen
-/// Input screen for connecting Sasmita Lens device
+/// Device Sync Screen — Bluetooth Real Connection
+/// Menggantikan input Device ID manual dengan scan Bluetooth nyata ke ESP32
 class DeviceSyncScreen extends ConsumerStatefulWidget {
   const DeviceSyncScreen({super.key});
 
@@ -15,424 +17,271 @@ class DeviceSyncScreen extends ConsumerStatefulWidget {
 }
 
 class _DeviceSyncScreenState extends ConsumerState<DeviceSyncScreen> {
-  final _deviceIdController = TextEditingController();
-  bool _isValidating = false;
-
   @override
-  void dispose() {
-    _deviceIdController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    // Auto-scan saat halaman dibuka
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(bluetoothManagerProvider).scanDevice();
+    });
   }
 
-  Future<void> _connectDevice() async {
-    final deviceId = _deviceIdController.text.trim();
-    
-    if (deviceId.isEmpty) {
-      _showError('Please enter a device ID');
-      return;
+  Future<void> _hubungkanDevice(BluetoothDevice device) async {
+    final btManager = ref.read(bluetoothManagerProvider);
+    final berhasil  = await btManager.hubungkan(device);
+
+    if (!mounted) return;
+
+    if (berhasil) {
+      ref.read(isDeviceConnectedProvider.notifier).state = true;
+      ref.read(deviceIdProvider.notifier).state = device.name ?? device.address;
+      _tampilSnackbar('✅ Terhubung ke ${device.name}', sukses: true);
+    } else {
+      _tampilSnackbar('❌ Gagal terhubung. Coba lagi.', sukses: false);
     }
-
-    setState(() {
-      _isValidating = true;
-    });
-
-    // Use the provider to validate and connect
-    await ref.read(deviceConnectionProvider.notifier).connectDevice(deviceId);
-
-    setState(() {
-      _isValidating = false;
-    });
-
-    final connectionState = ref.read(deviceConnectionProvider);
-    
-    connectionState.when(
-      data: (isConnected) {
-        if (isConnected) {
-          ref.read(deviceIdProvider.notifier).state = deviceId;
-          ref.read(isDeviceConnectedProvider.notifier).state = true;
-          _showSuccess('Device connected successfully!');
-        }
-      },
-      loading: () {},
-      error: (error, _) {
-        _showError(error.toString());
-      },
-    );
   }
 
-  void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: AppTheme.statusError,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-    );
+  void _putuskan() {
+    ref.read(bluetoothManagerProvider).putuskan();
+    ref.read(isDeviceConnectedProvider.notifier).state = false;
+    ref.read(deviceIdProvider.notifier).state = null;
   }
 
-  void _showSuccess(String message) {
+  void _tampilSnackbar(String pesan, {required bool sukses}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.check_circle, color: Colors.white),
-            const SizedBox(width: 12),
-            Text(message),
-          ],
-        ),
-        backgroundColor: AppTheme.statusSuccess,
+        content: Text(pesan),
+        backgroundColor: sukses ? AppTheme.statusSuccess : AppTheme.statusError,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final isConnected = ref.watch(isDeviceConnectedProvider);
-    final deviceId = ref.watch(deviceIdProvider);
-    final connectionState = ref.watch(deviceConnectionProvider);
+    final btManager   = ref.watch(bluetoothManagerProvider);
+    final terhubung   = ref.watch(btTerhubungProvider);
+    final deviceId    = ref.watch(deviceIdProvider);
+    final dataSensor  = ref.watch(sensorDataProvider);
 
     return Scaffold(
       backgroundColor: AppTheme.backgroundDark,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.arrow_back, color: AppTheme.textPrimary),
-        ),
+        leading: const SizedBox(),
         title: Text(
           'SASMITA LENS',
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                letterSpacing: 3,
-              ),
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(letterSpacing: 3),
         ),
         centerTitle: true,
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.help_outline, color: AppTheme.textPrimary),
-          ),
+          if (!terhubung)
+            IconButton(
+              onPressed: btManager.sedangCari ? null : () => btManager.scanDevice(),
+              icon: Icon(
+                Icons.refresh,
+                color: btManager.sedangCari ? AppTheme.textMuted : AppTheme.primaryGreen,
+              ),
+              tooltip: 'Scan ulang',
+            ),
         ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
-            const SizedBox(height: 40),
-            
-            // Device Icon with Status
-            _DeviceIcon(isConnected: isConnected),
-            
-            const SizedBox(height: 32),
-            
-            // Connection Card
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                gradient: AppTheme.cardGradient,
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: AppTheme.borderDark),
-              ),
-              child: Column(
-                children: [
-                  // Title
-                  Text(
-                    isConnected ? 'Device Connected' : 'Sync Device',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  
-                  const SizedBox(height: 12),
-                  
-                  // Subtitle
-                  Text(
-                    isConnected
-                        ? 'Your Sasmita Lens is ready to use'
-                        : 'Ensure your lens is turned on and within range.',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppTheme.textSecondary,
-                        ),
-                  ),
-                  
-                  const SizedBox(height: 32),
-                  
-                  if (!isConnected) ...[
-                    // Device ID Input
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Device ID',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: AppTheme.textSecondary,
-                              ),
-                        ),
-                        const SizedBox(height: 8),
-                        TextField(
-                          controller: _deviceIdController,
-                          textCapitalization: TextCapitalization.characters,
-                          maxLength: 15,
-                          decoration: InputDecoration(
-                            hintText: 'SAS-XXXX-Lens',
-                            prefixIcon: const Icon(
-                              Icons.qr_code,
-                              color: AppTheme.textMuted,
-                            ),
-                            counterText: '',
-                            filled: true,
-                            fillColor: AppTheme.backgroundDarker,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide.none,
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: const BorderSide(
-                                color: AppTheme.borderDark,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: const BorderSide(
-                                color: AppTheme.primaryGreen,
-                                width: 2,
-                              ),
-                            ),
-                          ),
-                          style: const TextStyle(
-                            letterSpacing: 2,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                    
-                    const SizedBox(height: 24),
-                    
-                    // Connect Button
-                    SizedBox(
-                      width: double.infinity,
-                      height: 56,
-                      child: ElevatedButton(
-                        onPressed: _isValidating ? null : _connectDevice,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.accentOrange,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(28),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: _isValidating
-                            ? const Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                      strokeWidth: 2,
-                                    ),
-                                  ),
-                                  SizedBox(width: 12),
-                                  Text(
-                                    'Connecting...',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : const Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Connect Device',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  Icon(Icons.arrow_forward, size: 20),
-                                ],
-                              ),
-                      ),
-                    ),
-                    
-                    const SizedBox(height: 16),
-                    
-                    // Help Link
-                    TextButton(
-                      onPressed: _showHelpDialog,
-                      child: Text(
-                        'Where do I find my ID?',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: AppTheme.textMuted,
-                            ),
-                      ),
-                    ),
-                  ] else ...[
-                    // Connected State
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: AppTheme.statusSuccess.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: AppTheme.statusSuccess.withOpacity(0.3),
-                        ),
-                      ),
-                      child: Column(
-                        children: [
-                          const Icon(
-                            Icons.check_circle,
-                            color: AppTheme.statusSuccess,
-                            size: 48,
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Sasmita Lens V2',
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'ID: ${deviceId ?? 'Unknown'}',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  color: AppTheme.textSecondary,
-                                ),
-                          ),
-                          const SizedBox(height: 16),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: 8,
-                                height: 8,
-                                decoration: const BoxDecoration(
-                                  color: AppTheme.statusSuccess,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              const Text(
-                                'CONNECTED',
-                                style: TextStyle(
-                                  color: AppTheme.statusSuccess,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 1,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    
-                    const SizedBox(height: 24),
-                    
-                    // Disconnect Button
-                    SizedBox(
-                      width: double.infinity,
-                      height: 56,
-                      child: OutlinedButton(
-                        onPressed: () {
-                          ref.read(deviceConnectionProvider.notifier).disconnect();
-                          ref.read(isDeviceConnectedProvider.notifier).state = false;
-                          ref.read(deviceIdProvider.notifier).state = null;
-                        },
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: AppTheme.statusError,
-                          side: const BorderSide(color: AppTheme.statusError),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(28),
-                          ),
-                        ),
-                        child: const Text(
-                          'Disconnect Device',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.2, end: 0),
-          ],
-        ),
-      ),
-    );
-  }
+            const SizedBox(height: 24),
 
-  void _showHelpDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppTheme.backgroundCard,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        title: Text(
-          'Finding Your Device ID',
-          style: Theme.of(context).textTheme.headlineSmall,
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+            // Status icon
+            _DeviceStatusIcon(terhubung: terhubung, sedangCari: btManager.sedangCari)
+                .animate()
+                .fadeIn(duration: 400.ms),
+
+            const SizedBox(height: 24),
+
+            // Status pesan
             Text(
-              'Your Sasmita Lens device ID can be found in the following locations:',
-              style: Theme.of(context).textTheme.bodyMedium,
+              btManager.statusPesan,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppTheme.textSecondary,
+                  ),
             ),
-            const SizedBox(height: 16),
-            _buildHelpItem('1. On the device label (back of the lens)'),
-            _buildHelpItem('2. In the device packaging box'),
-            _buildHelpItem('3. In the user manual'),
-            _buildHelpItem('4. Format: SAS-XXXX-Lens'),
+
+            const SizedBox(height: 32),
+
+            // Konten berdasarkan state
+            if (terhubung)
+              _PanelTerhubung(
+                deviceId:   deviceId ?? 'SASMITA-LENS',
+                dataSensor: dataSensor,
+                onPutuskan: _putuskan,
+              ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.2, end: 0)
+            else
+              _PanelDaftarDevice(
+                daftarDevice:    btManager.daftarDevice,
+                sedangCari:      btManager.sedangCari,
+                onHubungkan:     _hubungkanDevice,
+                onScanUlang:     btManager.scanDevice,
+              ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.2, end: 0),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Got it'),
-          ),
-        ],
       ),
     );
   }
+}
 
-  Widget _buildHelpItem(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
+// ─────────────────────────────────────────────
+//  Widget: Ikon status perangkat
+// ─────────────────────────────────────────────
+class _DeviceStatusIcon extends StatelessWidget {
+  const _DeviceStatusIcon({required this.terhubung, required this.sedangCari});
+  final bool terhubung;
+  final bool sedangCari;
+
+  @override
+  Widget build(BuildContext context) {
+    final warna = terhubung ? AppTheme.statusSuccess : AppTheme.primaryGreen;
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Container(
+          width: 140, height: 140,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: warna.withOpacity(0.08),
+          ),
+        ),
+        Container(
+          width: 100, height: 100,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: terhubung ? AppTheme.statusSuccess.withOpacity(0.15) : AppTheme.backgroundCard,
+            border: Border.all(color: warna.withOpacity(0.3), width: 2),
+          ),
+          child: Icon(
+            terhubung
+                ? Icons.bluetooth_connected
+                : sedangCari
+                    ? Icons.bluetooth_searching
+                    : Icons.bluetooth,
+            color: warna,
+            size: 40,
+          ),
+        )
+            .animate(onPlay: (c) => sedangCari ? c.repeat(reverse: true) : null)
+            .scale(
+              begin: const Offset(1.0, 1.0),
+              end: const Offset(1.05, 1.05),
+              duration: 800.ms,
+            ),
+        Positioned(
+          bottom: 10,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: warna,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              terhubung ? 'CONNECTED' : sedangCari ? 'SCANNING...' : 'BLUETOOTH',
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+//  Widget: Panel daftar device (belum terhubung)
+// ─────────────────────────────────────────────
+class _PanelDaftarDevice extends StatelessWidget {
+  const _PanelDaftarDevice({
+    required this.daftarDevice,
+    required this.sedangCari,
+    required this.onHubungkan,
+    required this.onScanUlang,
+  });
+  final List<BluetoothDevice> daftarDevice;
+  final bool sedangCari;
+  final Future<void> Function(BluetoothDevice) onHubungkan;
+  final Future<void> Function() onScanUlang;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: AppTheme.cardGradient,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppTheme.borderDark),
+      ),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 6,
-            height: 6,
-            margin: const EdgeInsets.only(top: 6),
-            decoration: const BoxDecoration(
-              color: AppTheme.primaryGreen,
-              shape: BoxShape.circle,
-            ),
+          Text(
+            'Perangkat Bluetooth Tersedia',
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              text,
-              style: Theme.of(context).textTheme.bodyMedium,
+          const SizedBox(height: 8),
+          Text(
+            'Pastikan ESP32 sudah menyala dan Bluetooth HP aktif.\n'
+            'Pair "SASMITA-LENS" di Pengaturan Bluetooth terlebih dahulu.',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: AppTheme.textMuted,
+                ),
+          ),
+          const SizedBox(height: 20),
+
+          if (sedangCari)
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.all(20),
+                child: CircularProgressIndicator(color: AppTheme.primaryGreen),
+              ),
+            )
+          else if (daftarDevice.isEmpty)
+            _EmptyDeviceHint(onScanUlang: onScanUlang)
+          else
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: daftarDevice.length,
+              itemBuilder: (ctx, i) {
+                final device = daftarDevice[i];
+                final adalahSasmita = (device.name ?? '').contains('SASMITA');
+                return _DeviceListTile(
+                  device:        device,
+                  adalahSasmita: adalahSasmita,
+                  onTap:         () => onHubungkan(device),
+                );
+              },
+            ),
+
+          const SizedBox(height: 16),
+
+          // Tombol scan ulang
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: OutlinedButton.icon(
+              onPressed: sedangCari ? null : onScanUlang,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppTheme.primaryGreen,
+                side: const BorderSide(color: AppTheme.primaryGreen),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+              ),
+              icon: const Icon(Icons.refresh, size: 18),
+              label: const Text('Scan Ulang'),
             ),
           ),
         ],
@@ -441,89 +290,320 @@ class _DeviceSyncScreenState extends ConsumerState<DeviceSyncScreen> {
   }
 }
 
-/// Device Icon with Connection Status
-class _DeviceIcon extends StatelessWidget {
-
-  const _DeviceIcon({required this.isConnected});
-  final bool isConnected;
+// ─────────────────────────────────────────────
+//  Widget: Tile satu device Bluetooth
+// ─────────────────────────────────────────────
+class _DeviceListTile extends StatelessWidget {
+  const _DeviceListTile({
+    required this.device,
+    required this.adalahSasmita,
+    required this.onTap,
+  });
+  final BluetoothDevice device;
+  final bool adalahSasmita;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        // Outer glow
-        Container(
-          width: 140,
-          height: 140,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: isConnected
-                ? AppTheme.statusSuccess.withOpacity(0.1)
-                : AppTheme.primaryGreen.withOpacity(0.1),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      decoration: BoxDecoration(
+        color: adalahSasmita
+            ? AppTheme.primaryGreen.withOpacity(0.08)
+            : AppTheme.backgroundDarker,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: adalahSasmita ? AppTheme.primaryGreen.withOpacity(0.4) : AppTheme.borderDark,
+        ),
+      ),
+      child: ListTile(
+        leading: Icon(
+          Icons.bluetooth,
+          color: adalahSasmita ? AppTheme.primaryGreen : AppTheme.textMuted,
+        ),
+        title: Text(
+          device.name ?? 'Unknown Device',
+          style: TextStyle(
+            color: AppTheme.textPrimary,
+            fontWeight: adalahSasmita ? FontWeight.w700 : FontWeight.w400,
           ),
         ),
-        
-        // Middle circle
-        Container(
-          width: 100,
-          height: 100,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: isConnected
-                ? AppTheme.statusSuccess.withOpacity(0.15)
-                : AppTheme.backgroundCard,
-            border: Border.all(
-              color: isConnected
-                  ? AppTheme.statusSuccess.withOpacity(0.3)
-                  : AppTheme.borderDark,
-              width: 2,
-            ),
-          ),
-          child: Icon(
-            isConnected ? Icons.check_circle : Icons.qr_code_scanner,
-            color: isConnected ? AppTheme.statusSuccess : AppTheme.primaryGreen,
-            size: 40,
-          ),
+        subtitle: Text(
+          device.address,
+          style: const TextStyle(color: AppTheme.textMuted, fontSize: 11),
         ),
-        
-        // Status badge
-        Positioned(
-          bottom: 10,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              color: isConnected ? AppTheme.statusSuccess : AppTheme.primaryGreen,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 6,
-                  height: 6,
-                  decoration: const BoxDecoration(
-                    color: Colors.black,
-                    shape: BoxShape.circle,
-                  ),
-                )
-                    .animate(onPlay: (c) => c.repeat(reverse: true))
-                    .scale(begin: const Offset(0.8, 0.8), end: const Offset(1.2, 1.2)),
-                const SizedBox(width: 6),
-                Text(
-                  isConnected ? 'CONNECTED' : 'SCANNING',
-                  style: const TextStyle(
+        trailing: adalahSasmita
+            ? Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryGreen,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Text(
+                  'SASMITA',
+                  style: TextStyle(
                     color: Colors.black,
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
-                    letterSpacing: 1,
+                  ),
+                ),
+              )
+            : const Icon(Icons.chevron_right, color: AppTheme.textMuted),
+        onTap: onTap,
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+//  Widget: Hint saat tidak ada device
+// ─────────────────────────────────────────────
+class _EmptyDeviceHint extends StatelessWidget {
+  const _EmptyDeviceHint({required this.onScanUlang});
+  final Future<void> Function() onScanUlang;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppTheme.accentOrange.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppTheme.accentOrange.withOpacity(0.3)),
+      ),
+      child: Column(
+        children: [
+          const Icon(Icons.bluetooth_disabled, color: AppTheme.accentOrange, size: 40),
+          const SizedBox(height: 12),
+          Text(
+            'Tidak ada perangkat ditemukan.',
+            style: Theme.of(context).textTheme.bodyMedium,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '1. Nyalakan ESP32 SASMITA LENS\n'
+            '2. Buka Pengaturan → Bluetooth\n'
+            '3. Pair perangkat "SASMITA-LENS"\n'
+            '4. Kembali ke sini dan scan ulang',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppTheme.textMuted),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+//  Widget: Panel setelah terhubung
+// ─────────────────────────────────────────────
+class _PanelTerhubung extends StatelessWidget {
+  const _PanelTerhubung({
+    required this.deviceId,
+    required this.dataSensor,
+    required this.onPutuskan,
+  });
+  final String deviceId;
+  final SensorData? dataSensor;
+  final VoidCallback onPutuskan;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: AppTheme.cardGradient,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppTheme.borderDark),
+      ),
+      child: Column(
+        children: [
+          // Badge terhubung
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: AppTheme.statusSuccess.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppTheme.statusSuccess.withOpacity(0.3)),
+            ),
+            child: Column(
+              children: [
+                const Icon(Icons.check_circle, color: AppTheme.statusSuccess, size: 48),
+                const SizedBox(height: 12),
+                Text(deviceId,
+                    style: Theme.of(context).textTheme.titleLarge),
+                const SizedBox(height: 4),
+                const Text('CONNECTED',
+                    style: TextStyle(
+                      color: AppTheme.statusSuccess,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 2,
+                      fontSize: 12,
+                    )),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          // Live data dari ESP32
+          if (dataSensor != null) ...[
+            Text('Data Live dari Sensor',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppTheme.textSecondary,
+                    )),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _SensorCard(
+                    label: 'UV Fluoresensi',
+                    nilai: dataSensor!.uvAktual.toString(),
+                    ikon: Icons.wb_sunny,
+                    warna: AppTheme.accentOrange,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _SensorCard(
+                    label: 'Gema Akustik',
+                    nilai: dataSensor!.gemaAkustik.toString(),
+                    ikon: Icons.graphic_eq,
+                    warna: AppTheme.primaryGreen,
                   ),
                 ),
               ],
             ),
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppTheme.backgroundDarker,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    _statusToEmoji(dataSensor!.status),
+                    style: const TextStyle(fontSize: 28),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    _statusToLabel(dataSensor!.status),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                  Text(
+                    'Skor Kualitas: ${dataSensor!.score}%',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: AppTheme.textMuted,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+          ] else ...[
+            const SizedBox(height: 12),
+            const Text(
+              'Menunggu data dari ESP32...',
+              style: TextStyle(color: AppTheme.textMuted),
+            ),
+            const SizedBox(height: 8),
+            const LinearProgressIndicator(
+              color: AppTheme.primaryGreen,
+              backgroundColor: AppTheme.backgroundDarker,
+            ),
+            const SizedBox(height: 20),
+          ],
+
+          // Tombol putuskan
+          SizedBox(
+            width: double.infinity,
+            height: 52,
+            child: OutlinedButton(
+              onPressed: onPutuskan,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppTheme.statusError,
+                side: const BorderSide(color: AppTheme.statusError),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26)),
+              ),
+              child: const Text('Putuskan Koneksi',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
+    );
+  }
+
+  String _statusToEmoji(String s) {
+    switch (s) {
+      case 'SEGAR_PADAT':    return '✅';
+      case 'MATANG_LUNAK':   return '⚠️';
+      case 'BELUM_MATANG':   return '🟡';
+      case 'INDIKASI_BUSUK': return '❌';
+      default:               return '🔍';
+    }
+  }
+
+  String _statusToLabel(String s) {
+    switch (s) {
+      case 'SEGAR_PADAT':    return 'Segar & Padat';
+      case 'MATANG_LUNAK':   return 'Matang / Lunak';
+      case 'BELUM_MATANG':   return 'Belum Matang';
+      case 'INDIKASI_BUSUK': return 'Indikasi Busuk';
+      default:               return 'Tidak Diketahui';
+    }
+  }
+}
+
+// ─────────────────────────────────────────────
+//  Widget: Kartu nilai sensor kecil
+// ─────────────────────────────────────────────
+class _SensorCard extends StatelessWidget {
+  const _SensorCard({
+    required this.label,
+    required this.nilai,
+    required this.ikon,
+    required this.warna,
+  });
+  final String label;
+  final String nilai;
+  final IconData ikon;
+  final Color warna;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: warna.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: warna.withOpacity(0.25)),
+      ),
+      child: Column(
+        children: [
+          Icon(ikon, color: warna, size: 24),
+          const SizedBox(height: 6),
+          Text(
+            nilai,
+            style: TextStyle(
+              color: warna,
+              fontWeight: FontWeight.w700,
+              fontSize: 20,
+            ),
+          ),
+          Text(
+            label,
+            style: const TextStyle(color: AppTheme.textMuted, fontSize: 10),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 }

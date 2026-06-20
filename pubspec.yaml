@@ -26,6 +26,12 @@ dependencies:
   intl: ^0.18.1
   flutter_svg: ^2.0.9
 
+  # Bluetooth Classic Serial (untuk ESP32 BluetoothSerial)
+  flutter_bluetooth_serial: ^0.4.0
+
+  # Permission handler (untuk izin Bluetooth Android)
+  permission_handler: ^11.0.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
