@@ -431,16 +431,23 @@ class _PanelTerhubung extends StatelessWidget {
               children: [
                 const Icon(Icons.check_circle, color: AppTheme.statusSuccess, size: 48),
                 const SizedBox(height: 12),
-                Text(deviceId,
-                    style: Theme.of(context).textTheme.titleLarge),
+                Text(
+                  deviceId,
+                  style: Theme.of(context).textTheme.titleLarge,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                ),
                 const SizedBox(height: 4),
-                const Text('CONNECTED',
-                    style: TextStyle(
-                      color: AppTheme.statusSuccess,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 2,
-                      fontSize: 12,
-                    )),
+                const Text(
+                  'CONNECTED',
+                  style: TextStyle(
+                    color: AppTheme.statusSuccess,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1,
+                    fontSize: 12,
+                  ),
+                ),
               ],
             ),
           ),
