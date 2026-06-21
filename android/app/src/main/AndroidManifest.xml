@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     <!-- Bluetooth Classic permissions (untuk koneksi ESP32 SASMITA LENS) -->
     <!-- Legacy BT permissions tanpa maxSdkVersion agar permission_handler bisa mendeteksinya -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
