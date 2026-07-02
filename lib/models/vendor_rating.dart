@@ -1,17 +1,22 @@
 /// Vendor Rating Model for Leaderboard System
 /// Represents a vendor/store with their quality metrics and points
 class VendorRating {
-
   VendorRating({
     required this.id,
     required this.name,
-    required this.totalScans, required this.averageRating, required this.freshnessConsistency, required this.totalPoints, required this.rank, this.logoUrl,
+    required this.totalScans,
+    required this.averageRating,
+    required this.freshnessConsistency,
+    required this.totalPoints,
+    required this.rank,
+    this.logoUrl,
     this.avatarUrl,
-    this.category = 'General',
+    this.category = 'Umum',
     DateTime? lastActive,
     this.isVerified = true,
     this.topProducts = const [],
   }) : lastActive = lastActive ?? DateTime.now();
+
   final String id;
   final String name;
   final String? logoUrl;
@@ -110,69 +115,69 @@ extension VendorRatingListExtension on List<VendorRating> {
   }
 }
 
-/// Mock vendor data for leaderboard
+/// Mock vendor data untuk leaderboard (Konteks Indonesia / SMK N 1 Bantul)
 class MockVendors {
   static List<VendorRating> getVendors() {
     final vendors = [
       VendorRating(
         id: 'vnd_001',
-        name: 'Green Grocer',
+        name: 'Koperasi Agro Bantul',
         avatarUrl: 'https://i.pravatar.cc/150?img=11',
-        totalScans: 450,
+        totalScans: 480,
         averageRating: 4.8,
-        freshnessConsistency: 0.95,
+        freshnessConsistency: 0.96,
         totalPoints: 0,
         rank: 1,
-        category: 'Organic',
-        topProducts: ['Apples', 'Mangoes', 'Leafy Greens'],
+        category: 'Mitra Tani',
+        topProducts: ['Mangga Harum Manis', 'Melon Sky Rocket', 'Cabai Rawit'],
       ),
       VendorRating(
         id: 'vnd_002',
-        name: 'Fresh Farms',
+        name: 'Kelompok Tani Makmur',
         avatarUrl: 'https://i.pravatar.cc/150?img=5',
-        totalScans: 380,
+        totalScans: 390,
         averageRating: 4.6,
         freshnessConsistency: 0.92,
         totalPoints: 0,
         rank: 2,
-        category: 'Farm Direct',
-        topProducts: ['Tomatoes', 'Cucumbers', 'Peppers'],
+        category: 'Petani Lokal',
+        topProducts: ['Semangka Tanpa Biji', 'Melon Honey Globe', 'Tomat Kurma'],
       ),
       VendorRating(
         id: 'vnd_003',
-        name: 'City Market',
+        name: 'Lapak Buah Bu Sri',
         avatarUrl: 'https://i.pravatar.cc/150?img=3',
-        totalScans: 320,
+        totalScans: 330,
         averageRating: 4.4,
         freshnessConsistency: 0.88,
         totalPoints: 0,
         rank: 3,
-        category: 'Supermarket',
-        topProducts: ['Bananas', 'Oranges', 'Grapes'],
+        category: 'Pedagang',
+        topProducts: ['Mangga Gadung', 'Jeruk Pacitan', 'Salak Pondoh'],
       ),
       VendorRating(
         id: 'vnd_004',
-        name: 'Whole Foods',
+        name: 'Petani Milenial Sanden',
         avatarUrl: 'https://i.pravatar.cc/150?img=8',
-        totalScans: 290,
+        totalScans: 300,
         averageRating: 4.5,
         freshnessConsistency: 0.90,
         totalPoints: 0,
         rank: 4,
-        category: 'Premium',
-        topProducts: ['Berries', 'Avocados', 'Exotic Fruits'],
+        category: 'Petani Lokal',
+        topProducts: ['Bawang Merah', 'Semangka Kuning', 'Melon Kirani'],
       ),
       VendorRating(
         id: 'vnd_005',
-        name: "Trader Joe's",
+        name: 'Toko Buah Berkah Abadi',
         avatarUrl: 'https://i.pravatar.cc/150?img=12',
-        totalScans: 250,
+        totalScans: 260,
         averageRating: 4.3,
         freshnessConsistency: 0.87,
         totalPoints: 0,
         rank: 5,
-        category: 'Discount',
-        topProducts: ['Seasonal Fruits', 'Nuts', 'Dried Fruits'],
+        category: 'Pedagang',
+        topProducts: ['Mangga Manalagi', 'Apel Malang', 'Pisang Mas'],
       ),
     ];
 

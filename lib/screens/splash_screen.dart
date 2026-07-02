@@ -47,10 +47,10 @@ class _SplashScreenState extends State<SplashScreen>
 
     // Controller: golden border entrance animate-in (0.8s)
     _borderController = AnimationController(vsync: this, duration: const Duration(milliseconds: 800));
-    _borderScale = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _borderController, curve: const Interval(0.0, 0.7, curve: Curves.elasticOut)),
+    _borderScale = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _borderController, curve: const Interval(0, 0.7, curve: Curves.elasticOut)),
     );
-    _borderRotation = Tween<double>(begin: 0.0, end: 2 * math.pi).animate(
+    _borderRotation = Tween<double>(begin: 0, end: 2 * math.pi).animate(
       CurvedAnimation(parent: _borderController, curve: Curves.linear),
     );
 
@@ -59,37 +59,37 @@ class _SplashScreenState extends State<SplashScreen>
       vsync: this,
       duration: const Duration(milliseconds: 12000),
     );
-    _ringSpinAngle = Tween<double>(begin: 0.0, end: 2 * math.pi).animate(
+    _ringSpinAngle = Tween<double>(begin: 0, end: 2 * math.pi).animate(
       CurvedAnimation(parent: _ringSpinController, curve: Curves.linear),
     );
 
     // Controller: eye fade+scale 600ms, starts after border
     _eyeController = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
-    _eyeOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _eyeController, curve: const Interval(0.0, 0.6, curve: Curves.easeOut)),
+    _eyeOpacity = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _eyeController, curve: const Interval(0, 0.6, curve: Curves.easeOut)),
     );
-    _eyeScale = Tween<double>(begin: 0.4, end: 1.0).animate(
+    _eyeScale = Tween<double>(begin: 0.4, end: 1).animate(
       CurvedAnimation(parent: _eyeController, curve: Curves.elasticOut),
     );
 
     // Controller: light beams shoot out 700ms after eye
     _beamController = AnimationController(vsync: this, duration: const Duration(milliseconds: 700));
-    _beamLength = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _beamLength = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _beamController, curve: Curves.easeOutCubic),
     );
 
     // Controller: leaf scale-in 600ms
     _leafController = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
-    _leafScale = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _leafScale = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _leafController, curve: Curves.elasticOut),
     );
-    _leafOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _leafController, curve: const Interval(0.0, 0.5, curve: Curves.easeIn)),
+    _leafOpacity = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _leafController, curve: const Interval(0, 0.5, curve: Curves.easeIn)),
     );
 
     // Controller: molecule fade-in 500ms
     _moleculeController = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
-    _moleculeOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _moleculeOpacity = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _moleculeController, curve: Curves.easeIn),
     );
 
@@ -104,7 +104,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     // Controller: progress bar 3.5s
     _progressController = AnimationController(vsync: this, duration: const Duration(milliseconds: 3500));
-    _progressAnim = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _progressAnim = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _progressController, curve: Curves.easeInOut),
     );
 
@@ -113,7 +113,7 @@ class _SplashScreenState extends State<SplashScreen>
       vsync: this,
       duration: const Duration(milliseconds: 700),
     );
-    _sweepProgress = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _sweepProgress = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _sweepController, curve: Curves.easeInOut),
     );
 
@@ -160,7 +160,7 @@ class _SplashScreenState extends State<SplashScreen>
   /// Loops the light sweep: 700ms sweep → 2600ms rest → repeat
   Future<void> _runSweepLoop() async {
     while (mounted) {
-      await _sweepController.forward(from: 0.0);
+      await _sweepController.forward(from: 0);
       _sweepController.reset();
       await Future.delayed(const Duration(milliseconds: 2600));
     }
@@ -197,7 +197,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+      body: DecoratedBox(
         // Rich green gradient background
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -256,9 +256,9 @@ class _SplashScreenState extends State<SplashScreen>
               const SizedBox(height: 40),
 
               // ── "SASMITA" text ──
-              Text(
+              const Text(
                 'SASMITA',
-                style: const TextStyle(
+                style: TextStyle(
                   color: Color(0xFFFFFFFF),
                   fontSize: 38,
                   fontWeight: FontWeight.w900,
@@ -769,14 +769,12 @@ class _SasmitaLogoPainter extends CustomPainter {
     // Gradient dari transparan → putih terang → transparan
     final sweepPaint = Paint()
       ..shader = LinearGradient(
-        begin: Alignment.centerLeft,
-        end: Alignment.centerRight,
         colors: [
-          Colors.white.withValues(alpha: 0.0),
+          Colors.white.withValues(alpha: 0),
           Colors.white.withValues(alpha: 0.18),
           Colors.white.withValues(alpha: 0.55),
           Colors.white.withValues(alpha: 0.18),
-          Colors.white.withValues(alpha: 0.0),
+          Colors.white.withValues(alpha: 0),
         ],
         stops: const [0.0, 0.25, 0.5, 0.75, 1.0],
       ).createShader(gradRect);

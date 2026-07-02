@@ -32,6 +32,11 @@ dependencies:
   # Permission handler (untuk izin Bluetooth Android)
   permission_handler: ^11.0.1
 
+  # Kamera + AI (Teachable Machine -> TensorFlow Lite)
+  image_picker: ^1.1.2      # ambil foto dari kamera
+  tflite_flutter: ^0.11.0   # jalankan model TFLite
+  image: ^4.2.0             # preprocessing gambar
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -45,6 +50,7 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/models/
 
 flutter_launcher_icons:
   android: true

@@ -9,7 +9,7 @@ import '../utils/app_theme.dart';
 import '../widgets/star_rating.dart';
 
 /// Leaderboard Screen
-/// Displays top verified vendors and social feed
+/// Menampilkan mitra tani terbaik dan kabar pemindaian kualitas buah secara langsung.
 class LeaderboardScreen extends ConsumerWidget {
   const LeaderboardScreen({super.key});
 
@@ -26,37 +26,38 @@ class LeaderboardScreen extends ConsumerWidget {
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
-            // Header
+            // Header Utama
             SliverToBoxAdapter(
               child: _buildHeader(context, userProfile, userPoints),
             ),
             
-            // Content
+            // Konten
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
                   
-                  // Top Verified Vendors
-                  _buildSectionHeader(context, 'Top Verified Vendors', 'View All'),
+                  // Peringkat Mitra Tani Terbaik
+                  _buildSectionHeader(context, 'Mitra Tani Terbaik', 'Lihat Semua'),
                   
                   const SizedBox(height: 16),
                   
-                  // Podium
+                  // Podium Tiga Besar
                   _PodiumSection(vendors: topVendors.take(3).toList()),
                   
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 28),
                   
-                  // Category Filters
-                  _CategoryFilters(),
-                  
-                  const SizedBox(height: 24),
-                  
-                  // Quality Feed Header
+                  // Kabar Kualitas Buah
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      Text(
+                        'Kabar Kualitas',
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
                       Row(
                         children: [
                           Container(
@@ -72,24 +73,30 @@ class LeaderboardScreen extends ConsumerWidget {
                               .fadeOut(duration: 500.ms),
                           const SizedBox(width: 8),
                           Text(
-                            'Live Updates',
+                            'Live Update',
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                   color: AppTheme.statusSuccess,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
                                 ),
                           ),
                         ],
-                      ),
-                      Text(
-                        'Quality Feed',
-                        style: Theme.of(context).textTheme.headlineSmall,
                       ),
                     ],
                   ),
                   
                   const SizedBox(height: 16),
                   
-                  // Feed Items
-                  ...feeds.map((feed) => _FeedCard(feed: feed)),
+                  // Filter Kategori
+                  _CategoryFilters(),
+                  
+                  const SizedBox(height: 20),
+                  
+                  // Daftar Postingan Kabar Kualitas
+                  if (feeds.isEmpty)
+                    _buildEmptyFeed(context)
+                  else
+                    ...feeds.map((feed) => _FeedCard(feed: feed)),
                   
                   const SizedBox(height: 100), // Bottom padding
                 ]),
@@ -111,31 +118,17 @@ class LeaderboardScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Quality Feed',
-                style: Theme.of(context).textTheme.headlineSmall,
+                'Papan Peringkat',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
               const SizedBox(height: 4),
-              Row(
-                children: [
-                  Container(
-                    width: 8,
-                    height: 8,
-                    decoration: const BoxDecoration(
-                      color: AppTheme.statusSuccess,
-                      shape: BoxShape.circle,
+              Text(
+                'Mitra Tani & Konsistensi Kualitas',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppTheme.textSecondary,
                     ),
-                  )
-                      .animate(onPlay: (c) => c.repeat(reverse: true))
-                      .fadeIn(duration: 500.ms)
-                      .fadeOut(duration: 500.ms),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Live Updates',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppTheme.statusSuccess,
-                        ),
-                  ),
-                ],
               ),
             ],
           ),
@@ -149,15 +142,17 @@ class LeaderboardScreen extends ConsumerWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                CircleAvatar(
-                  radius: 14,
-                  backgroundImage: NetworkImage(userProfile['avatar']),
+                const Icon(
+                  Icons.emoji_events,
+                  color: AppTheme.accentYellow,
+                  size: 16,
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '$userPoints pts',
+                  '$userPoints Poin',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.textPrimary,
                       ),
                 ),
               ],
@@ -174,7 +169,9 @@ class LeaderboardScreen extends ConsumerWidget {
       children: [
         Text(
           title,
-          style: Theme.of(context).textTheme.titleLarge,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
         ),
         TextButton(
           onPressed: () {},
@@ -182,17 +179,28 @@ class LeaderboardScreen extends ConsumerWidget {
             action,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: AppTheme.primaryGreen,
+                  fontWeight: FontWeight.bold,
                 ),
           ),
         ),
       ],
     );
   }
+
+  Widget _buildEmptyFeed(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+      alignment: Alignment.center,
+      child: const Text(
+        'Tidak ada pembaruan kualitas pada kategori ini.',
+        style: TextStyle(color: AppTheme.textMuted, fontSize: 13),
+      ),
+    );
+  }
 }
 
-/// Podium Section with Top 3 Vendors
+/// Podium Section dengan Desain 3D Sederhana dan Indikator Peringkat 1-3
 class _PodiumSection extends StatelessWidget {
-
   const _PodiumSection({required this.vendors});
   final List<VendorRating> vendors;
 
@@ -200,40 +208,40 @@ class _PodiumSection extends StatelessWidget {
   Widget build(BuildContext context) {
     if (vendors.length < 3) return const SizedBox.shrink();
 
-    // Use a Row where rank-1 is visually higher via different topPadding offsets.
-    // This avoids fixed-height containers that cause overflow.
     return IntrinsicHeight(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // 2nd Place (slightly lower than 1st)
-          _PodiumItem(
-            vendor: vendors[1],
-            rank: 2,
-            color: AppTheme.accentYellow,
-            topOffset: 40,
+          // Juara 2
+          Expanded(
+            child: _PodiumItem(
+              vendor: vendors[1],
+              rank: 2,
+              color: AppTheme.accentYellow,
+              topOffset: 35,
+            ),
           ),
-
-          const SizedBox(width: 20),
-
-          // 1st Place (highest)
-          _PodiumItem(
-            vendor: vendors[0],
-            rank: 1,
-            color: AppTheme.primaryGreen,
-            isFirst: true,
-            topOffset: 0,
+          const SizedBox(width: 12),
+          // Juara 1 (Paling Tinggi & Glowing)
+          Expanded(
+            child: _PodiumItem(
+              vendor: vendors[0],
+              rank: 1,
+              color: AppTheme.primaryGreen,
+              isFirst: true,
+              topOffset: 0,
+            ),
           ),
-
-          const SizedBox(width: 20),
-
-          // 3rd Place (lowest)
-          _PodiumItem(
-            vendor: vendors[2],
-            rank: 3,
-            color: AppTheme.accentOrange,
-            topOffset: 60,
+          const SizedBox(width: 12),
+          // Juara 3
+          Expanded(
+            child: _PodiumItem(
+              vendor: vendors[2],
+              rank: 3,
+              color: AppTheme.accentOrange,
+              topOffset: 50,
+            ),
           ),
         ],
       ),
@@ -241,11 +249,8 @@ class _PodiumSection extends StatelessWidget {
   }
 }
 
-/// Podium Item Widget
-/// Uses [topOffset] to push the item down, creating a visual podium height effect
-/// without requiring a fixed-height bar that causes overflow.
+/// Item Podium untuk Satu Mitra Tani
 class _PodiumItem extends StatelessWidget {
-
   const _PodiumItem({
     required this.vendor,
     required this.rank,
@@ -253,6 +258,7 @@ class _PodiumItem extends StatelessWidget {
     required this.topOffset,
     this.isFirst = false,
   });
+
   final VendorRating vendor;
   final int rank;
   final Color color;
@@ -261,136 +267,140 @@ class _PodiumItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double avatarSize = isFirst ? 80 : 62;
+    final double avatarSize = isFirst ? 76 : 58;
     final double fontSize = isFirst ? 13 : 11;
 
     return Padding(
       padding: EdgeInsets.only(top: topOffset),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Crown icon for 1st place (outside Stack, no overflow risk)
-          if (isFirst)
-            const Padding(
-              padding: EdgeInsets.only(bottom: 4),
-              child: Icon(
-                Icons.emoji_events,
-                color: AppTheme.accentYellow,
-                size: 26,
-              ),
-            )
-          else
-            const SizedBox(height: 30), // align baseline with crown
-
-          // Avatar with rank badge
-          Stack(
-            clipBehavior: Clip.none,
-            children: [
-              // Avatar circle
-              Container(
-                width: avatarSize,
-                height: avatarSize,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: color,
-                    width: isFirst ? 3.5 : 2.5,
-                  ),
-                  boxShadow: isFirst
-                      ? [
-                          BoxShadow(
-                            color: color.withOpacity(0.45),
-                            blurRadius: 18,
-                            spreadRadius: 3,
-                          ),
-                        ]
-                      : null,
-                ),
-                child: ClipOval(
-                  child: Image.network(
-                    vendor.avatarUrl ?? 'https://i.pravatar.cc/150',
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return ColoredBox(
-                        color: AppTheme.backgroundCard,
-                        child: Icon(
-                          Icons.store,
-                          color: color,
-                          size: isFirst ? 36 : 26,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-
-              // Rank badge (bottom-center)
-              Positioned(
-                bottom: -8,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: Container(
-                    width: isFirst ? 24 : 20,
-                    height: isFirst ? 24 : 20,
-                    decoration: BoxDecoration(
-                      color: color,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: AppTheme.backgroundDark,
-                        width: 2,
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        '$rank',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: isFirst ? 12 : 10,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        decoration: BoxDecoration(
+          color: AppTheme.backgroundCard,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isFirst ? color.withOpacity(0.5) : AppTheme.borderDark,
+            width: isFirst ? 1.5 : 1,
           ),
+          boxShadow: isFirst
+              ? [
+                  BoxShadow(
+                    color: color.withOpacity(0.08),
+                    blurRadius: 15,
+                    spreadRadius: 2,
+                  ),
+                ]
+              : null,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Trofi untuk Peringkat 1
+            if (isFirst)
+              const Padding(
+                padding: EdgeInsets.only(bottom: 4),
+                child: Icon(
+                  Icons.emoji_events,
+                  color: AppTheme.accentYellow,
+                  size: 24,
+                ),
+              )
+            else
+              const SizedBox(height: 12),
 
-          const SizedBox(height: 16),
+            // Avatar & Lencana Rank
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: avatarSize,
+                  height: avatarSize,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: color,
+                      width: isFirst ? 3 : 2,
+                    ),
+                  ),
+                  child: ClipOval(
+                    child: Image.network(
+                      vendor.avatarUrl ?? 'https://i.pravatar.cc/150',
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return ColoredBox(
+                          color: AppTheme.backgroundDarker,
+                          child: Icon(
+                            Icons.store,
+                            color: color,
+                            size: isFirst ? 28 : 22,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: -6,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: Container(
+                      width: isFirst ? 22 : 18,
+                      height: isFirst ? 22 : 18,
+                      decoration: BoxDecoration(
+                        color: color,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: AppTheme.backgroundCard,
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '$rank',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: isFirst ? 11 : 9,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
 
-          // Vendor Name
-          SizedBox(
-            width: 90,
-            child: Text(
+            const SizedBox(height: 14),
+
+            // Nama Mitra
+            Text(
               vendor.name,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.bold,
                     fontSize: fontSize,
                   ),
-              maxLines: 2,
+              maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-          ),
 
-          const SizedBox(height: 4),
+            const SizedBox(height: 4),
 
-          // Points
-          Text(
-            '${_formatPoints(vendor.totalPoints)} pts',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: isFirst ? color : AppTheme.textMuted,
-                  fontWeight: isFirst ? FontWeight.w700 : FontWeight.w500,
-                  fontSize: isFirst ? 13 : 11,
-                ),
-          ),
-        ],
+            // Poin Kualitas
+            Text(
+              '${_formatPoints(vendor.totalPoints)} Poin',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: isFirst ? color : AppTheme.textMuted,
+                    fontWeight: isFirst ? FontWeight.bold : FontWeight.w500,
+                    fontSize: isFirst ? 12 : 10,
+                  ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  /// Format large numbers: 9840 → 9.8k
   String _formatPoints(int points) {
     if (points >= 1000) {
       return '${(points / 1000).toStringAsFixed(1)}k';
@@ -399,11 +409,11 @@ class _PodiumItem extends StatelessWidget {
   }
 }
 
-/// Category Filters
+/// Category Filters (Bahasa Indonesia)
 class _CategoryFilters extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final filters = ['All', 'Mangoes', 'Coffee', 'Apples', 'Verified'];
+    final filters = ['Semua', 'Mangga', 'Melon', 'Terverifikasi'];
     final selectedFilter = ref.watch(feedFilterProvider);
 
     return SizedBox(
@@ -434,19 +444,17 @@ class _CategoryFilters extends ConsumerWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (filter == 'All')
+                  if (filter == 'Semua')
                     Icon(
                       Icons.grid_view,
                       size: 14,
                       color: isSelected ? Colors.black : AppTheme.textMuted,
                     ),
-                  if (filter == 'Mangoes')
+                  if (filter == 'Mangga')
                     const Text('🥭', style: TextStyle(fontSize: 14)),
-                  if (filter == 'Coffee')
-                    const Text('☕', style: TextStyle(fontSize: 14)),
-                  if (filter == 'Apples')
-                    const Text('🍎', style: TextStyle(fontSize: 14)),
-                  if (filter == 'Verified')
+                  if (filter == 'Melon')
+                    const Text('🍈', style: TextStyle(fontSize: 14)),
+                  if (filter == 'Terverifikasi')
                     Icon(
                       Icons.verified,
                       size: 14,
@@ -472,7 +480,6 @@ class _CategoryFilters extends ConsumerWidget {
 
 /// Feed Card Widget
 class _FeedCard extends StatelessWidget {
-
   const _FeedCard({required this.feed});
   final ScanFeed feed;
 
@@ -488,12 +495,11 @@ class _FeedCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
+          // Header Pengguna
           Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                // User Avatar
                 CircleAvatar(
                   radius: 20,
                   backgroundImage: NetworkImage(
@@ -502,7 +508,6 @@ class _FeedCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 
-                // User Info
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -513,11 +518,11 @@ class _FeedCard extends StatelessWidget {
                             TextSpan(
                               text: feed.userName,
                               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.bold,
                                   ),
                             ),
                             TextSpan(
-                              text: ' ${feed.actionText} ',
+                              text: ' baru saja ${feed.actionText} ',
                               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                     color: AppTheme.textSecondary,
                                   ),
@@ -526,49 +531,58 @@ class _FeedCard extends StatelessWidget {
                               text: feed.productName,
                               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                     color: _getGradeColor(feed.productGrade),
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.bold,
                                   ),
                             ),
                           ],
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Row(
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 4,
                         children: [
-                          const Icon(
-                            Icons.access_time,
-                            size: 12,
-                            color: AppTheme.textMuted,
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.access_time,
+                                size: 12,
+                                color: AppTheme.textMuted,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                feed.formattedTimeAgo,
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: AppTheme.textMuted,
+                                    ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 4),
-                          Text(
-                            feed.formattedTimeAgo,
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          if (feed.location != null)
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.location_on,
+                                  size: 12,
                                   color: AppTheme.textMuted,
                                 ),
-                          ),
-                          if (feed.location != null) ...[
-                            const SizedBox(width: 12),
-                            const Icon(
-                              Icons.location_on,
-                              size: 12,
-                              color: AppTheme.textMuted,
+                                const SizedBox(width: 4),
+                                Text(
+                                  feed.location!,
+                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                        color: AppTheme.textMuted,
+                                      ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 4),
-                            Text(
-                              feed.location!,
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: AppTheme.textMuted,
-                                  ),
-                            ),
-                          ],
                         ],
                       ),
                     ],
                   ),
                 ),
                 
-                // More options
                 IconButton(
                   onPressed: () {},
                   icon: const Icon(
@@ -580,41 +594,43 @@ class _FeedCard extends StatelessWidget {
             ),
           ),
           
-          // Product Image
+          // Gambar Produk (jika ada)
           if (feed.productImage != null)
             Stack(
               children: [
-                Image.network(
-                  feed.productImage!,
-                  width: double.infinity,
-                  height: 180,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      width: double.infinity,
-                      height: 180,
-                      color: AppTheme.backgroundDarker,
-                      child: const Icon(
-                        Icons.image_not_supported,
-                        color: AppTheme.textMuted,
-                      ),
-                    );
-                  },
+                ClipRRect(
+                  child: Image.network(
+                    feed.productImage!,
+                    width: double.infinity,
+                    height: 180,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: double.infinity,
+                        height: 180,
+                        color: AppTheme.backgroundDarker,
+                        child: const Icon(
+                          Icons.image_not_supported,
+                          color: AppTheme.textMuted,
+                        ),
+                      );
+                    },
+                  ),
                 ),
                 
-                // Verification/Flag Badge
+                // Lencana Terverifikasi SASMITA
                 Positioned(
                   top: 12,
                   right: 12,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
                       color: feed.isVerified
                           ? AppTheme.statusSuccess.withOpacity(0.9)
                           : feed.isFlagged
                               ? AppTheme.statusError.withOpacity(0.9)
                               : AppTheme.backgroundDark.withOpacity(0.9),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -625,22 +641,20 @@ class _FeedCard extends StatelessWidget {
                               : feed.isFlagged
                                   ? Icons.warning
                                   : Icons.info,
-                          color: feed.isVerified || feed.isFlagged
-                              ? Colors.white
-                              : AppTheme.textSecondary,
-                          size: 14,
+                          color: Colors.white,
+                          size: 13,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           feed.isVerified
-                              ? 'SASMITA VERIFIED'
+                              ? 'VERIFIED SASMITA'
                               : feed.isFlagged
-                                  ? 'FLAGGED'
-                                  : 'PENDING',
+                                  ? 'TERLAPOR'
+                                  : 'TERTUNDA',
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
                             letterSpacing: 0.5,
                           ),
                         ),
@@ -649,7 +663,7 @@ class _FeedCard extends StatelessWidget {
                   ),
                 ),
                 
-                // Quality overlay
+                // Hamparan Kualitas Kemanisan
                 if (feed.qualityScore != null)
                   Positioned(
                     bottom: 12,
@@ -664,10 +678,11 @@ class _FeedCard extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'SWEETNESS',
+                            'SKOR KEMANISAN',
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                   fontSize: 9,
                                   color: AppTheme.textMuted,
+                                  fontWeight: FontWeight.bold,
                                 ),
                           ),
                           const SizedBox(width: 6),
@@ -675,23 +690,25 @@ class _FeedCard extends StatelessWidget {
                             '${feed.qualityScore!.toInt()}%',
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                   color: AppTheme.primaryGreen,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.bold,
                                 ),
                           ),
                           if (feed.size != null) ...[
                             const SizedBox(width: 12),
                             Text(
-                              'SIZE',
+                              'UKURAN',
                               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                     fontSize: 9,
                                     color: AppTheme.textMuted,
+                                    fontWeight: FontWeight.bold,
                                   ),
                             ),
                             const SizedBox(width: 6),
                             Text(
                               feed.size!,
                               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppTheme.textPrimary,
                                   ),
                             ),
                           ],
@@ -702,19 +719,18 @@ class _FeedCard extends StatelessWidget {
               ],
             ),
           
-          // Footer
+          // Kaki Postingan
           Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Rating
+                // Tampilan Bintang
                 StarRatingDisplay(
                   rating: feed.rating.toDouble(),
-                  size: 18,
                 ),
                 
-                // Actions
+                // Tombol Reaksi
                 Row(
                   children: [
                     _ActionButton(
@@ -739,8 +755,10 @@ class _FeedCard extends StatelessWidget {
   Color _getGradeColor(String grade) {
     switch (grade.toUpperCase()) {
       case 'A':
+      case 'A+':
         return AppTheme.statusSuccess;
       case 'B':
+      case 'B+':
         return AppTheme.accentYellow;
       case 'C':
         return AppTheme.accentOrange;
@@ -750,13 +768,12 @@ class _FeedCard extends StatelessWidget {
   }
 }
 
-/// Action Button Widget
 class _ActionButton extends StatelessWidget {
-
   const _ActionButton({
     required this.icon,
     required this.count,
   });
+
   final IconData icon;
   final int count;
 
@@ -767,7 +784,7 @@ class _ActionButton extends StatelessWidget {
       children: [
         Icon(
           icon,
-          size: 18,
+          size: 16,
           color: AppTheme.textMuted,
         ),
         const SizedBox(width: 4),

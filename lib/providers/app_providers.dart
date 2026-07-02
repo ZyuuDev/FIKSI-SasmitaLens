@@ -1,269 +1,180 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../models/fruit_analysis.dart';
 import '../models/scan_feed.dart';
 import '../models/vendor_rating.dart';
+import '../providers/bluetooth_service.dart';
 
 // ==================== Navigation State ====================
 
-/// Current tab index provider
 final currentTabIndexProvider = StateProvider<int>((ref) => 0);
 
-/// Page controller provider for main layout
 final pageControllerProvider = Provider<PageController>((ref) {
   return PageController();
 });
 
 // ==================== Device Connection State ====================
 
-/// Device connection state
-final isDeviceConnectedProvider = StateProvider<bool>((ref) => false);
+final isDeviceConnectedProvider = Provider<bool>((ref) {
+  return ref.watch(btTerhubungProvider);
+});
 
-/// Device ID provider
 final deviceIdProvider = StateProvider<String?>((ref) => null);
 
-/// Device connection notifier
-class DeviceConnectionNotifier extends StateNotifier<AsyncValue<bool>> {
-  DeviceConnectionNotifier() : super(const AsyncValue.data(false));
+// ==================== Scan History State ====================
 
-  /// Validate and connect device
-  Future<void> connectDevice(String deviceId) async {
-    state = const AsyncValue.loading();
-    
-    try {
-      // Simulate API call delay
-      await Future.delayed(const Duration(seconds: 1));
-      
-      // Validate device ID (6-digit alphanumeric)
-      final isValid = _validateDeviceId(deviceId);
-      
-      if (isValid) {
-        state = const AsyncValue.data(true);
-      } else {
-        throw Exception('Invalid Device ID. Please enter a valid 6-digit code.');
-      }
-    } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
+/// Scan history — menyimpan riwayat scan dari ESP32
+class ScanHistoryNotifier extends StateNotifier<List<SensorData>> {
+  ScanHistoryNotifier() : super([]);
+
+  void tambahScan(SensorData data) {
+    if (!data.isHasilScan) return;
+    state = [data, ...state];
+    if (state.length > 100) {
+      state = state.take(100).toList();
     }
   }
 
-  /// Disconnect device
-  void disconnect() {
-    state = const AsyncValue.data(false);
-  }
+  void hapusSemua() => state = [];
 
-  /// Validate device ID format
-  bool _validateDeviceId(String deviceId) {
-    // Remove any prefixes like "SAS-" or "-Lens"
-    final cleanId = deviceId
-        .replaceAll('SAS-', '')
-        .replaceAll('-Lens', '')
-        .replaceAll('-', '')
-        .trim();
-    
-    // Check if it's exactly 6 alphanumeric characters
-    final regex = RegExp(r'^[A-Z0-9]{6}$');
-    return regex.hasMatch(cleanId.toUpperCase());
-  }
-
-  /// Format device ID for display
-  String formatDeviceId(String deviceId) {
-    final cleanId = deviceId.replaceAll(RegExp('[^A-Z0-9]'), '').toUpperCase();
-    if (cleanId.length >= 6) {
-      return 'SAS-${cleanId.substring(0, 4)}-Lens';
-    }
-    return deviceId;
+  void hapusSatu(int index) {
+    final newList = [...state];
+    newList.removeAt(index);
+    state = newList;
   }
 }
 
-/// Device connection provider
-final deviceConnectionProvider = StateNotifierProvider<DeviceConnectionNotifier, AsyncValue<bool>>((ref) {
-  return DeviceConnectionNotifier();
+final scanHistoryProvider =
+    StateNotifierProvider<ScanHistoryNotifier, List<SensorData>>(
+  (ref) => ScanHistoryNotifier(),
+);
+
+/// Statistik ringkasan riwayat scan — AKUSTIK ONLY
+final statsRiwayatProvider = Provider<Map<String, int>>((ref) {
+  final riwayat = ref.watch(scanHistoryProvider);
+  final stats = <String, int>{
+    'total':           riwayat.length,
+    'segar_padat':     0,
+    'matang_lunak':    0,
+    'belum_matang':    0,
+    'indikasi_busuk':  0,
+    'tidak_diketahui': 0,
+  };
+  for (final scan in riwayat) {
+    switch (scan.status) {
+      case 'SEGAR_PADAT':    stats['segar_padat']     = (stats['segar_padat']     ?? 0) + 1; break;
+      case 'MATANG_LUNAK':   stats['matang_lunak']    = (stats['matang_lunak']    ?? 0) + 1; break;
+      case 'BELUM_MATANG':   stats['belum_matang']    = (stats['belum_matang']    ?? 0) + 1; break;
+      case 'INDIKASI_BUSUK': stats['indikasi_busuk']  = (stats['indikasi_busuk']  ?? 0) + 1; break;
+      default:               stats['tidak_diketahui'] = (stats['tidak_diketahui'] ?? 0) + 1;
+    }
+  }
+  return stats;
 });
 
 // ==================== Scan State ====================
 
-/// Scanning state provider
-final isScanningProvider = StateProvider<bool>((ref) => false);
-
-/// Current scan result provider
-final currentScanResultProvider = StateProvider<FruitAnalysis?>((ref) => null);
-
-/// Scan history provider
-final scanHistoryProvider = StateProvider<List<FruitAnalysis>>((ref) => []);
-
-/// Scan notifier for managing scan operations
-class ScanNotifier extends StateNotifier<AsyncValue<FruitAnalysis?>> {
-  ScanNotifier() : super(const AsyncValue.data(null));
-
-  /// Perform a scan
-  Future<void> performScan() async {
-    state = const AsyncValue.loading();
-    
-    try {
-      // Simulate scanning delay
-      await Future.delayed(const Duration(seconds: 2));
-      
-      // Generate mock result
-      final result = FruitAnalysis.mock();
-      state = AsyncValue.data(result);
-    } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
-    }
-  }
-
-  /// Clear current scan
-  void clearScan() {
-    state = const AsyncValue.data(null);
-  }
-
-  /// Submit rating for a scan
-  Future<void> submitRating({
-    required String scanId,
-    required int rating,
-    String? location,
-  }) async {
-    try {
-      // Simulate API call
-      await Future.delayed(const Duration(milliseconds: 500));
-      
-      // In a real app, this would update the backend
-      debugPrint('Rating submitted: $rating for scan $scanId at $location');
-    } catch (e) {
-      debugPrint('Error submitting rating: $e');
-      rethrow;
-    }
-  }
-}
-
-/// Scan provider
-final scanProvider = StateNotifierProvider<ScanNotifier, AsyncValue<FruitAnalysis?>>((ref) {
-  return ScanNotifier();
-});
+final isScanningProvider       = StateProvider<bool>((ref) => false);
+final currentScanResultProvider = StateProvider<SensorData?>((ref) => null);
 
 // ==================== Leaderboard State ====================
 
-/// Vendors list provider
 final vendorsProvider = StateProvider<List<VendorRating>>((ref) {
   return MockVendors.getVendors();
 });
 
-/// Sorted vendors by points
 final sortedVendorsProvider = Provider<List<VendorRating>>((ref) {
   final vendors = ref.watch(vendorsProvider);
   return vendors.sortedByPoints().withUpdatedRanks();
 });
 
-/// Top 3 vendors provider
 final topVendorsProvider = Provider<List<VendorRating>>((ref) {
   final vendors = ref.watch(sortedVendorsProvider);
   return vendors.take(3).toList();
 });
 
-/// Leaderboard category filter
 final leaderboardFilterProvider = StateProvider<String>((ref) => 'All');
 
 // ==================== Social Feed State ====================
 
-/// Scan feed provider
 final scanFeedProvider = StateProvider<List<ScanFeed>>((ref) {
   return MockScanFeed.getFeeds();
 });
 
-/// Feed category filter
-final feedFilterProvider = StateProvider<String>((ref) => 'All');
+final feedFilterProvider = StateProvider<String>((ref) => 'Semua');
 
-/// Filtered feed provider
 final filteredFeedProvider = Provider<List<ScanFeed>>((ref) {
-  final feeds = ref.watch(scanFeedProvider);
+  final feeds  = ref.watch(scanFeedProvider);
   final filter = ref.watch(feedFilterProvider);
-  
-  if (filter == 'All') return feeds;
+  if (filter == 'All' || filter == 'Semua') return feeds;
   return MockScanFeed.getFeedsByCategory(filter);
 });
 
-/// User points provider
-final userPointsProvider = StateProvider<int>((ref) => 2450);
+final userPointsProvider = StateProvider<int>((ref) => 1250);
 
 // ==================== Settings State ====================
 
-/// Notifications enabled provider
 final notificationsEnabledProvider = StateProvider<bool>((ref) => true);
+final isDarkModeProvider           = StateProvider<bool>((ref) => true);
 
-/// Dark mode provider (app is always dark mode)
-final isDarkModeProvider = StateProvider<bool>((ref) => true);
-
-/// User profile provider
 final userProfileProvider = StateProvider<Map<String, dynamic>>((ref) {
   return {
-    'name': 'Alex Chen',
-    'email': 'alex.chen@email.com',
-    'avatar': 'https://i.pravatar.cc/150?img=13',
-    'membership': 'Pro Member',
-    'joinedDate': DateTime(2023, 6, 15),
+    'name':       'Fairuz',
+    'email':      'sasmitalens@smkn1bantul.sch.id',
+    'avatar':     '',
+    'membership': 'FIKSI 2026 — SMK N 1 Bantul',
+    'joinedDate': DateTime(2026, 6),
+    'sekolah':    'SMK Negeri 1 Bantul',
+    'proyek':     'SASMITA LENS',
   };
 });
 
-/// App version provider
-final appVersionProvider = Provider<String>((ref) => 'v2.4.1');
+/// Versi app — v4 sesuai firmware
+final appVersionProvider = Provider<String>((ref) => 'v4.0');
 
 // ==================== UI State ====================
 
-/// Bottom sheet visibility provider
 final isBottomSheetOpenProvider = StateProvider<bool>((ref) => false);
+final isLoadingProvider         = StateProvider<bool>((ref) => false);
+final errorMessageProvider      = StateProvider<String?>((ref) => null);
+final successMessageProvider    = StateProvider<String?>((ref) => null);
 
-/// Loading state provider
-final isLoadingProvider = StateProvider<bool>((ref) => false);
+// ==================== Device Status State ====================
 
-/// Error message provider
-final errorMessageProvider = StateProvider<String?>((ref) => null);
+/// Status perangkat untuk Home Screen — AKUSTIK ONLY, tidak ada UV
+final deviceStatusProvider = Provider<Map<String, dynamic>>((ref) {
+  final terhubung  = ref.watch(btTerhubungProvider);
+  final dataSensor = ref.watch(sensorDataProvider);
 
-/// Success message provider
-final successMessageProvider = StateProvider<String?>((ref) => null);
-
-// ==================== Harvest Status State ====================
-
-/// Current harvest status provider
-final harvestStatusProvider = StateProvider<Map<String, dynamic>>((ref) {
   return {
-    'plot': 'Plot B-4, Sasmita Farms',
-    'grade': 'A',
-    'variety': 'Alphonso Gold',
-    'harvestEst': '2.4 Tons',
-    'maturity': 92.0,
-    'brixLevel': 18.0,
-    'acidity': 4.2,
-    'residue': 'Clean',
-    'imageUrl': 'https://images.unsplash.com/photo-1553279768-865429fa0078?w=400',
+    'terhubung':          terhubung,
+    'statusLabel':        terhubung ? 'Terhubung' : 'Tidak Terhubung',
+    'akustikTerakhir':    dataSensor?.gemaAkustik ?? 0,
+    'freqTerakhir':       dataSensor?.freqHz      ?? 0,
+    'ampTerakhir':        dataSensor?.ampRaw       ?? 0,
+    'confTerakhir':       dataSensor?.confPct      ?? 0,
+    'kondisiTerakhir':    dataSensor?.labelKondisi ?? '—',
+    'statusTerakhir':     dataSensor?.status       ?? '',
+    'waktuTerakhir':      dataSensor?.timestamp,
+    'baterai':            dataSensor?.bat ?? -1,
+    'ampValid':           dataSensor?.isAmpValid ?? false,
+    // TIDAK ADA 'uvTerakhir' — tidak ada sensor optik
   };
 });
 
-// ==================== Recent Scans State ====================
-
-/// Recent scans provider for home screen
-final recentScansProvider = StateProvider<List<Map<String, dynamic>>>((ref) {
-  return [
-    {
-      'id': 'scan_001',
-      'name': 'Plot A-12 Sample',
-      'time': DateTime.now().subtract(const Duration(hours: 2)),
-      'grade': 'A',
-      'image': 'https://images.unsplash.com/photo-1553279768-865429fa0078?w=100',
-    },
-    {
-      'id': 'scan_002',
-      'name': 'Plot C-08 Sample',
-      'time': DateTime.now().subtract(const Duration(hours: 5)),
-      'grade': 'B+',
-      'image': 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=100',
-    },
-    {
-      'id': 'scan_003',
-      'name': 'Plot D-03 Sample',
-      'time': DateTime.now().subtract(const Duration(days: 1)),
-      'grade': 'A+',
-      'image': 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=100',
-    },
-  ];
+/// 5 scan terakhir untuk Home Screen
+final recentScansProvider = Provider<List<SensorData>>((ref) {
+  final riwayat = ref.watch(scanHistoryProvider);
+  return riwayat.take(5).toList();
 });
+
+// ==================== Threshold Settings (AKUSTIK ONLY) ====================
+
+/// Ambang frekuensi: freq >= ini → keras/belum matang
+final akustikPadatMinProvider = StateProvider<int>((ref) => 500);
+
+/// Ambang frekuensi: freq <= ini → lunak/matang
+final akustikLunakMaxProvider = StateProvider<int>((ref) => 330);
+
+/// Ambang amplitudo minimum (di bawah ini → sinyal tidak valid / indikasi busuk)
+final ampMinValidProvider = StateProvider<int>((ref) => 25);

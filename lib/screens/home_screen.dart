@@ -6,17 +6,20 @@ import '../providers/app_providers.dart';
 import '../utils/app_theme.dart';
 import '../widgets/circular_progress.dart';
 import '../widgets/recent_scan_card.dart';
+import 'scan_screen.dart';
 
 /// Home Screen
-/// Displays welcome message, harvest status, metrics, and recent scans
+/// Menampilkan ringkasan status perangkat Sasmita Lens, metrik analisis,
+/// dan riwayat pemindaian terbaru untuk petani/operator lokal.
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final harvestStatus = ref.watch(harvestStatusProvider);
+    final deviceStatus = ref.watch(deviceStatusProvider);
     final recentScans = ref.watch(recentScansProvider);
     final userProfile = ref.watch(userProfileProvider);
+    final stats = ref.watch(statsRiwayatProvider);
 
     return Scaffold(
       backgroundColor: AppTheme.backgroundDark,
@@ -24,40 +27,45 @@ class HomeScreen extends ConsumerWidget {
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
-            // App Bar
+            // App Bar / Header Teks
             SliverToBoxAdapter(
               child: _buildAppBar(context, userProfile),
             ),
             
-            // Content
+            // Konten Utama
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 12),
                   
-                  // Harvest Status Card
-                  _HarvestStatusCard(harvestStatus: harvestStatus),
-                  
-                  const SizedBox(height: 24),
-                  
-                  // Metrics Row
-                  _buildMetricsRow(context, harvestStatus),
+                  // Kartu Status Perangkat & Sensor Terakhir
+                  _DeviceStatusCard(deviceStatus: deviceStatus),
                   
                   const SizedBox(height: 24),
                   
-                  // Recent Scans Header
-                  _buildSectionHeader(context, 'Recent Scans', 'View All'),
+                  // Statistik Ringkasan Pengukuran
+                  _buildStatsTitle(context),
+                  const SizedBox(height: 16),
+                  _buildMetricsRow(context, stats),
+                  
+                  const SizedBox(height: 28),
+                  
+                  // Header Riwayat Scan
+                  _buildSectionHeader(context, 'Riwayat Pemindaian', 'Lihat Semua', ref),
                   
                   const SizedBox(height: 12),
                   
-                  // Recent Scans List
-                  ...recentScans.map((scan) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: RecentScanCard(scan: scan),
-                  ),),
+                  // Daftar Scan Terbaru
+                  if (recentScans.isEmpty)
+                    _buildEmptyState(context)
+                  else
+                    ...recentScans.map((scan) => Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: RecentScanCard(scan: scan),
+                    ),),
                   
-                  const SizedBox(height: 100), // Bottom padding for nav bar
+                  const SizedBox(height: 100), // Bottom padding untuk navigasi
                 ]),
               ),
             ),
@@ -77,15 +85,25 @@ class HomeScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Hello,',
+                'Halo, Selamat Datang 👋',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: AppTheme.textSecondary,
                     ),
               ),
               const SizedBox(height: 4),
               Text(
-                'Welcome back, ${userProfile['name'].toString().split(' ')[0]}',
-                style: Theme.of(context).textTheme.headlineSmall,
+                userProfile['name'],
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              Text(
+                '${userProfile['sekolah']} | ${userProfile['proyek']}',
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: AppTheme.primaryGreen,
+                  letterSpacing: 0.5,
+                ),
               ),
             ],
           ),
@@ -123,78 +141,209 @@ class HomeScreen extends ConsumerWidget {
     ).animate().fadeIn(duration: 400.ms).slideY(begin: -0.2, end: 0);
   }
 
-  Widget _buildMetricsRow(BuildContext context, Map<String, dynamic> harvestStatus) {
+  Widget _buildStatsTitle(BuildContext context) {
+    return Text(
+      'Ringkasan Kualitas Panen',
+      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+    );
+  }
+
+  Widget _buildMetricsRow(BuildContext context, Map<String, int> stats) {
+    final total = stats['total'] ?? 0;
+    final segar = stats['segar_padat'] ?? 0;
+    final busuk = stats['indikasi_busuk'] ?? 0;
+    
+    final persentaseSegar = total > 0 ? segar / total : 0.0;
+    final persentaseSehat = total > 0 ? (total - busuk) / total : 0.0;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         CircularProgressWidget(
-          value: harvestStatus['brixLevel'] / 25, // Normalize to 0-1
-          displayValue: '${harvestStatus['brixLevel'].toInt()}%',
-          label: 'Brix Level',
-          sublabel: 'HIGH',
-          color: AppTheme.accentOrange,
-        ),
-        CircularProgressWidget(
-          value: harvestStatus['acidity'] / 7, // Normalize to 0-1
-          displayValue: '${harvestStatus['acidity']}',
-          label: 'Acidity pH',
-          sublabel: 'OPTIMAL',
+          value: total > 0 ? 1.0 : 0.0,
+          displayValue: '$total',
+          label: 'Total Pindai',
+          sublabel: 'BUAH',
           color: AppTheme.primaryGreen,
         ),
         CircularProgressWidget(
-          value: 1,
-          displayValue: '✓',
-          label: 'Residue',
-          sublabel: harvestStatus['residue'].toString().toUpperCase(),
-          color: AppTheme.primaryGreen,
-          isCheckmark: true,
+          value: persentaseSegar,
+          displayValue: total > 0 ? '${(persentaseSegar * 100).toInt()}%' : '0%',
+          label: 'Kondisi Segar',
+          sublabel: 'GRADE A+',
+          color: AppTheme.accentYellow,
+        ),
+        CircularProgressWidget(
+          value: persentaseSehat,
+          displayValue: total > 0 ? '${(persentaseSehat * 100).toInt()}%' : '0%',
+          label: 'Kelayakan Buah',
+          sublabel: 'AMAN SIMPAN',
+          color: AppTheme.statusSuccess,
         ),
       ],
     ).animate().fadeIn(delay: 400.ms, duration: 500.ms);
   }
 
-  Widget _buildSectionHeader(BuildContext context, String title, String action) {
+  Widget _buildSectionHeader(
+    BuildContext context,
+    String title,
+    String action,
+    WidgetRef ref,
+  ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           title,
-          style: Theme.of(context).textTheme.titleLarge,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
         ),
         TextButton(
-          onPressed: () {},
+          onPressed: () {
+            // Pindah ke tab Leaderboard (index 2 di PageView/main layout)
+            // Di main_layout, PageView memiliki 4 halaman: Home(0), Device(1), Leaderboard(2), Settings(3)
+            ref.read(pageControllerProvider).animateToPage(
+                  2,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
+          },
           child: Text(
             action,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: AppTheme.primaryGreen,
+                  fontWeight: FontWeight.bold,
                 ),
           ),
         ),
       ],
     );
   }
+
+  Widget _buildEmptyState(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+      decoration: BoxDecoration(
+        color: AppTheme.backgroundCard,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppTheme.borderDark),
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppTheme.primaryGreen.withOpacity(0.08),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.qr_code_scanner_rounded,
+              color: AppTheme.primaryGreen.withOpacity(0.6),
+              size: 48,
+            ),
+          )
+              .animate(onPlay: (controller) => controller.repeat(reverse: true))
+              .scale(
+                begin: const Offset(1, 1),
+                end: const Offset(1.08, 1.08),
+                duration: 2.seconds,
+                curve: Curves.easeInOut,
+              ),
+          const SizedBox(height: 16),
+          Text(
+            'Belum Ada Riwayat Pemindaian',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Sambungkan Sasmita Lens dan lakukan pemindaian buah pertama Anda untuk melihat kualitas di sini.',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: AppTheme.textMuted,
+                ),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton.icon(
+            onPressed: () {
+              // Buka scan sheet modal
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                builder: (context) => const ScanScreen(),
+              );
+            },
+            icon: const Icon(Icons.play_arrow_rounded, color: Colors.black),
+            label: const Text(
+              'Mulai Scan Sekarang',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryGreen,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ).animate().fadeIn(duration: 400.ms);
+  }
 }
 
-/// Harvest Status Card Widget
-class _HarvestStatusCard extends StatelessWidget {
+/// Kartu Informasi Status Perangkat & Hasil Pembacaan Terakhir
+class _DeviceStatusCard extends ConsumerWidget {
+  const _DeviceStatusCard({required this.deviceStatus});
 
-  const _HarvestStatusCard({required this.harvestStatus});
-  final Map<String, dynamic> harvestStatus;
+  final Map<String, dynamic> deviceStatus;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool terhubung = deviceStatus['terhubung'] as bool? ?? false;
+    final int uv = deviceStatus['uvTerakhir'] as int? ?? 0;
+    final int akustik = deviceStatus['akustikTerakhir'] as int? ?? 0;
+    final String kondisi = deviceStatus['kondisiTerakhir'] as String? ?? '—';
+    final String statusKode = deviceStatus['statusTerakhir'] as String? ?? '';
+    
+    Color statusColor = AppTheme.statusError;
+    if (terhubung) {
+      statusColor = AppTheme.statusSuccess;
+    }
+
+    Color kondisiColor = AppTheme.textMuted;
+    if (statusKode == 'SEGAR_PADAT') kondisiColor = AppTheme.statusSuccess;
+    if (statusKode == 'BELUM_MATANG') kondisiColor = AppTheme.accentOrange;
+    if (statusKode == 'MATANG_LUNAK') kondisiColor = AppTheme.statusWarning;
+    if (statusKode == 'INDIKASI_BUSUK') kondisiColor = AppTheme.statusError;
+
     return DecoratedBox(
       decoration: BoxDecoration(
         gradient: AppTheme.cardGradient,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: AppTheme.borderDark),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.25),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
+          // Header Koneksi
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -202,24 +351,27 @@ class _HarvestStatusCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'CURRENT HARVEST STATUS',
+                      'STATUS KONEKSI ALAT',
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                            fontSize: 11,
+                            fontSize: 10,
                             color: AppTheme.textMuted,
+                            letterSpacing: 1,
                           ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
                     Row(
                       children: [
-                        const Icon(
-                          Icons.location_on,
-                          color: AppTheme.primaryGreen,
+                        Icon(
+                          terhubung ? Icons.bluetooth_connected : Icons.bluetooth_disabled,
+                          color: statusColor,
                           size: 16,
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: 6),
                         Text(
-                          harvestStatus['plot'],
-                          style: Theme.of(context).textTheme.bodyMedium,
+                          terhubung ? 'Sasmita Lens Aktif' : 'Perangkat Terputus',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
                         ),
                       ],
                     ),
@@ -228,8 +380,9 @@ class _HarvestStatusCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: AppTheme.primaryGreen.withOpacity(0.15),
+                    color: statusColor.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: statusColor.withOpacity(0.2)),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -237,16 +390,18 @@ class _HarvestStatusCard extends StatelessWidget {
                       Container(
                         width: 6,
                         height: 6,
-                        decoration: const BoxDecoration(
-                          color: AppTheme.primaryGreen,
+                        decoration: BoxDecoration(
+                          color: statusColor,
                           shape: BoxShape.circle,
                         ),
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        'GRADE ${harvestStatus['grade']}',
+                        terhubung ? 'TERHUBUNG' : 'MATI',
                         style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                              fontSize: 11,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: statusColor,
                             ),
                       ),
                     ],
@@ -255,143 +410,236 @@ class _HarvestStatusCard extends StatelessWidget {
               ],
             ),
           ),
-          
-          // Fruit Image
+
+          // Divider tipis
           Container(
-            height: 180,
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              image: DecorationImage(
-                image: NetworkImage(harvestStatus['imageUrl']),
-                fit: BoxFit.cover,
+            height: 1,
+            color: AppTheme.borderDark,
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+          ),
+
+          if (!terhubung)
+            // Tampilan jika terputus
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Hubungkan Sasmita Lens via Bluetooth untuk membaca data pantulan UV (GUVA-S12SD) & resonansi akustik (MAX9814) secara real-time.',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppTheme.textSecondary,
+                      height: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Lompat ke tab DeviceSync
+                        ref.read(pageControllerProvider).animateToPage(
+                              1,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOut,
+                            );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.backgroundDarker,
+                        foregroundColor: AppTheme.primaryGreen,
+                        side: const BorderSide(color: AppTheme.borderDark),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      child: const Text(
+                        'Sambungkan Bluetooth Sekarang',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-            child: Stack(
-              children: [
-                // Gradient overlay
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    gradient: LinearGradient(
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                      colors: [
-                        Colors.black.withOpacity(0.7),
-                        Colors.transparent,
+            )
+          else ...[
+            // Tampilan data pengukuran terakhir jika terhubung
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'PENGUKURAN TERAKHIR',
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          fontSize: 10,
+                          color: AppTheme.textMuted,
+                          letterSpacing: 1,
+                        ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _SensorValueWidget(
+                          label: 'Pantulan UV',
+                          value: uv > 0 ? '$uv' : '—',
+                          unit: 'GUVA-S12SD',
+                          icon: Icons.lightbulb_outline,
+                          color: AppTheme.accentYellow,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _SensorValueWidget(
+                          label: 'Resonansi Suara',
+                          value: akustik > 0 ? '$akustik' : '—',
+                          unit: 'Hz (MAX9814)',
+                          icon: Icons.hearing_outlined,
+                          color: AppTheme.primaryGreen,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppTheme.backgroundDarker,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: AppTheme.borderDark),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Kondisi Buah:',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: AppTheme.textSecondary,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              kondisi,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: kondisiColor,
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
-                ),
-                
-                // Variety label
-                Positioned(
-                  bottom: 16,
-                  left: 16,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'VARIETY',
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                              fontSize: 10,
-                              color: AppTheme.textMuted,
-                            ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        // Buka scan modal
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) => const ScanScreen(),
+                        );
+                      },
+                      icon: const Icon(Icons.play_arrow_rounded, color: Colors.black),
+                      label: const Text(
+                        'Pindai Buah Baru',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        harvestStatus['variety'],
-                        style: Theme.of(context).textTheme.titleLarge,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primaryGreen,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
-                    ],
-                  ),
-                ),
-                
-                // Expand button
-                Positioned(
-                  bottom: 16,
-                  right: 16,
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(
-                      Icons.fullscreen,
-                      color: AppTheme.textPrimary,
-                      size: 20,
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          
-          // Stats Row
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _StatBox(
-                    label: 'HARVEST EST.',
-                    value: harvestStatus['harvestEst'],
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _StatBox(
-                    label: 'MATURITY',
-                    value: '${harvestStatus['maturity'].toInt()}% Ready',
-                    valueColor: AppTheme.primaryGreen,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          ],
         ],
       ),
     ).animate().fadeIn(delay: 200.ms, duration: 500.ms).slideY(begin: 0.2, end: 0);
   }
 }
 
-/// Stat Box Widget
-class _StatBox extends StatelessWidget {
-
-  const _StatBox({
+/// Widget kecil menampilkan nilai sensor terakhir di dalam kartu
+class _SensorValueWidget extends StatelessWidget {
+  const _SensorValueWidget({
     required this.label,
     required this.value,
-    this.valueColor,
+    required this.unit,
+    required this.icon,
+    required this.color,
   });
+
   final String label;
   final String value;
-  final Color? valueColor;
+  final String unit;
+  final IconData icon;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppTheme.backgroundDarker,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppTheme.borderDark),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  fontSize: 10,
-                  color: AppTheme.textMuted,
+          Row(
+            children: [
+              Icon(
+                icon,
+                color: color,
+                size: 14,
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 10,
+                    color: AppTheme.textMuted,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
+              ),
+            ],
           ),
           const SizedBox(height: 8),
           Text(
             value,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: valueColor,
-                ),
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            unit,
+            style: const TextStyle(
+              fontSize: 9,
+              color: AppTheme.textMuted,
+            ),
           ),
         ],
       ),

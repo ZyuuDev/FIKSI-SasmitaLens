@@ -1,10 +1,9 @@
 // Basic Flutter widget test for Sasmita Lens app.
 
+import 'package:Sasmita_Lens/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:Sasmita_Lens/main.dart';
 
 void main() {
   testWidgets('Sasmita Lens app smoke test', (WidgetTester tester) async {

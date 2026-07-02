@@ -129,7 +129,7 @@ class _CustomBottomNavigationBar extends StatelessWidget {
             
             // Device Sync
             _NavItem(
-              icon: Icons.qr_code_scanner_rounded,
+              icon: Icons.bluetooth_searching_rounded,
               isSelected: currentIndex == 1,
               onTap: () => onTap(1),
             ),

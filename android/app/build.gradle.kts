@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.sasmita_lens"
+    namespace = "com.sasmitalens.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -19,12 +19,18 @@ android {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
+    signingConfigs {
+        create("release") {
+            keyAlias = "sasmitalens"
+            keyPassword = "sasmita2024"
+            storeFile = file("../sasmitalens-release.keystore")
+            storePassword = "sasmita2024"
+        }
+    }
+
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.sasmita_lens"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion  // Minimum untuk flutter_bluetooth_serial
+        applicationId = "com.sasmitalens.app"
+        minSdk = flutter.minSdkVersion  // Support Android 5.0+ (Bluetooth & kamera)
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -32,9 +38,9 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = false
+            isShrinkResources = false
         }
     }
 }
